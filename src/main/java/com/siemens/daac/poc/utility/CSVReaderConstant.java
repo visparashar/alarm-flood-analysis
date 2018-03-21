@@ -11,4 +11,6 @@ public static final String COMMA = ",";
 public static final String CSV_EXTENSION=".csv";
 public static final String FILE_SEP="_1";
 public static final String LINE_SEPARATOR = "line.separator";
+public static final String EMPTY_STRING = "";
+public static final String ZIP_EXTENSION=".zip";
 }
