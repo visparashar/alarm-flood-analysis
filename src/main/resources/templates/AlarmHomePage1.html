@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<title>Alarm Flood Analysis</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var _validFileExtensions = [".csv", ".zip"];    
+function Validate(oForm) {
+    var arrInputs = oForm.getElementsByTagName("input");
+    for (var i = 0; i < arrInputs.length; i++) {
+        var oInput = arrInputs[i];
+        if (oInput.type == "file") {
+            var sFileName = oInput.value;
+            if (sFileName.length > 0) {
+                var blnValid = false;
+                for (var j = 0; j < _validFileExtensions.length; j++) {
+                    var sCurExtension = _validFileExtensions[j];
+                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                        blnValid = true;
+                        break;
+                    }
+                }
+                
+                if (!blnValid) {
+                    alert("Invalid File Extension");
+                    return false;
+                }
+            }
+        }
+    }
+  
+    return true;
+}
+/*]]>*/
+</script>
+
+<body>
+<div class="container">
+<h1>Alarm Flood Analysis</h1>
+
+<form method="POST" action="/upload" onsubmit="return Validate(this);" enctype="multipart/form-data">
+    <input type="file" name="file" /><br/><br/>
+    <input type="submit" class="btn btn-success" value="Submit" />
+</form>
+
+
+
+<div th:if="${message}">
+<h1>Status Of Uploaded File</h1>
+    <h2 th:text="${message}"/>
+    
+ <form action="/train">
+ 
+  <input type="submit" value="Train Data" class="btn-danger btn"/>
+</form>
+
+</div>
+
+</div>
+<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script
+    src="webjars/bootstrap-datepicker/1.0.1/js/bootstrap-datepicker.js"></script>
+ </body>
+ </html>   
