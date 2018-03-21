@@ -9,9 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,10 +27,8 @@ import java.util.zip.ZipFile;
 public class CSVReaderUtil {
 	private static double count = 0;
 
-	public static Map<String, Map<String,String>> processInputFile(String inputFilePath) throws IOException {
+	public static void processInputFile(String inputFilePath) throws IOException {
 		Set<String> inputSet = new HashSet<String>();
-		Map<String, Map<String,String>> statusPercentageMapOfZip =  new HashMap<String, Map<String,String>>();;
-		Map<String, String> statusPercentageMap = new HashMap<String, String>();
 		String floodStatus = new String();
 		double percentageOfTrueFlood = 0.0;
 		BufferedReader br = null;
@@ -54,10 +50,6 @@ public class CSVReaderUtil {
 				} else {
 					floodStatus = CSVReaderConstant.NOT_SURE;
 				}
-				statusPercentageMap.put(CSVReaderConstant.FLOOD_STATUS, floodStatus);
-				statusPercentageMap.put(CSVReaderConstant.PERCENTAGE_OF_TRUE_FLOOD,
-						String.valueOf(percentageOfTrueFlood));
-				statusPercentageMapOfZip.put(entry.getName(), statusPercentageMap);
 				addColumn(inputFilePath, floodStatus, entry.getName());
 				count = 0;
 			}
@@ -65,7 +57,6 @@ public class CSVReaderUtil {
 			if (br != null)
 				br.close();
 		}
-		return statusPercentageMapOfZip;
 	}
 
 	private static Function<String, String> mapToItem = (line) -> {
