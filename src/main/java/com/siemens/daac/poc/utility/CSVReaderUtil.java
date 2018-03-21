@@ -3,7 +3,6 @@ package com.siemens.daac.poc.utility;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +29,9 @@ import java.util.zip.ZipFile;
 public class CSVReaderUtil {
 	private static double count = 0;
 
-	public static Map<String, String> processInputFile(String inputFilePath) throws IOException {
+	public static Map<String, Map<String,String>> processInputFile(String inputFilePath) throws IOException {
 		Set<String> inputSet = new HashSet<String>();
+		Map<String, Map<String,String>> statusPercentageMapOfZip =  new HashMap<String, Map<String,String>>();;
 		Map<String, String> statusPercentageMap = new HashMap<String, String>();
 		String floodStatus = new String();
 		double percentageOfTrueFlood = 0.0;
@@ -46,7 +46,6 @@ public class CSVReaderUtil {
 				InputStream inputFS = zipFile.getInputStream(entry);
 				br = new BufferedReader(new InputStreamReader(inputFS));
 				inputSet = br.lines().skip(1).map(mapToItem).collect(Collectors.toSet());
-				br.close();
 				percentageOfTrueFlood = (inputSet.size() / count) * 100;
 				if (percentageOfTrueFlood > 60) {
 					floodStatus = CSVReaderConstant.TRUE;
@@ -58,6 +57,7 @@ public class CSVReaderUtil {
 				statusPercentageMap.put(CSVReaderConstant.FLOOD_STATUS, floodStatus);
 				statusPercentageMap.put(CSVReaderConstant.PERCENTAGE_OF_TRUE_FLOOD,
 						String.valueOf(percentageOfTrueFlood));
+				statusPercentageMapOfZip.put(entry.getName(), statusPercentageMap);
 				addColumn(inputFilePath, floodStatus, entry.getName());
 				count = 0;
 			}
@@ -65,7 +65,7 @@ public class CSVReaderUtil {
 			if (br != null)
 				br.close();
 		}
-		return statusPercentageMap;
+		return statusPercentageMapOfZip;
 	}
 
 	private static Function<String, String> mapToItem = (line) -> {
@@ -91,7 +91,7 @@ public class CSVReaderUtil {
 
 					File file2 = new File(
 							fileName.replace(CSVReaderConstant.CSV_EXTENSION, CSVReaderConstant.EMPTY_STRING)
-									+ CSVReaderConstant.FILE_SEP + CSVReaderConstant.CSV_EXTENSION);// so the
+									+ CSVReaderConstant.FILE_SEP + CSVReaderConstant.CSV_EXTENSION);
 					br = new BufferedReader(new InputStreamReader(inputFS));
 					bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file2)));
 					String line = null;
