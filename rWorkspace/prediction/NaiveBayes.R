@@ -1,0 +1,97 @@
+# Naive Bayes
+
+
+
+
+#Read file and get training and test set 
+read_file_func <- function(inputfiledirname ,datatype){
+ if(datatype == "training"){
+    input_file_name =paste0(inputfiledirname,"/" ,CONST_PREDICT_FILENAME)
+ }else{
+    input_file_name =inputfiledirname
+  }
+ 
+  print(input_file_name)
+  data_set <- try(read.csv(input_file_name), silent = TRUE)
+  if (inherits(data_set, "try-error"))
+  {
+    message_string = paste("Error 1: Unable to read file")
+    logEvent(message_string, "Error")
+    print (message_string)
+    return (FALSE)
+  }
+  trim_values=''
+   if(datatype == "training")
+  {
+     trim_values = c(CONST_ALARMTAG_INDEX ,CONST_ALARMID_INDEX,CONST_STATUS_INDEX)
+   }else{
+     trim_values = c(CONST_ALARMTAG_INDEX ,CONST_ALARMID_INDEX)
+  }
+  data_set = data_set[trim_values]
+  return(data_set)
+}
+
+
+# #trim the table using giving start and end index 
+# trim_table <- function(dataset , trimfactor)
+# {
+#   trim_table =trim_table[trimfactor]
+#   return(trim_table)
+# }
+
+
+
+
+
+
+CustomNaiveBayesFunc<-function(input_file_path){
+  setwd(input_file_path)
+  source("filename_constants.R")
+  source("logger.R")
+  
+  library(e1071)
+# function to read the csv of training set
+# input_file_path ="C:/R_Workspace/FinalFiles"
+training_data<-read_file_func(input_file_path ,CONST_TRAINING_SET)
+
+#presetup factoring
+training_data$Flood.Status = factor(training_data$Flood.Status, levels = c(0, 1))
+
+#need to get all the files from test input folder
+input_file_path = paste0(input_file_path,"/",CONST_TEST_SET_INPUT_DIRECTORY)
+print(input_file_path)
+
+filenames <- list.files(path = input_file_path , pattern = '*.csv')
+for (file in filenames) {
+  new_path =paste0(input_file_path,"/",file)
+ 
+  test_set<-read_file_func(new_path ,CONST_TEST_SET)
+  
+  # applying naive bayes algo
+  classifier = naiveBayes(x = training_data[-3],
+                          y = training_data$Flood.Status)
+  #count for calculation of the no. of 1 in the prediction
+  count =0
+  # Predicting the Test set results
+  y_pred = predict(classifier, newdata = test_set)
+  
+  for (v in y_pred) {
+    if(v==1){
+      count=count+1
+    }
+  }
+
+
+  if(count/nrow(test_set)>=.5){
+    test_set =cbind(test_set ,Status=1)
+  }else{
+    test_set =cbind(test_set ,Status=0)
+  }
+  #Writing the result to csv
+  write.csv(test_set,file = paste0("result",file ,".csv"),row.names = FALSE,quote = FALSE)
+}
+
+  
+}
+CustomNaiveBayesFunc('C:/R_Workspace/FinalFiles')
+
