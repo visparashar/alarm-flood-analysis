@@ -13,4 +13,14 @@ public static final String FILE_SEP="_1";
 public static final String LINE_SEPARATOR = "line.separator";
 public static final String EMPTY_STRING = "";
 public static final String ZIP_EXTENSION=".zip";
+public static final String ZERO_STRING="0";
+public static final int ZERO=0;
+public static final String ONE_STRING="1";
+public static final int SIXTY = 60;
+public static final int THIRTY = 30;
+public static final int HUNDRED = 100;
+public static final String MERGED_FILE_PATH = "mergedFilePath";
+public static final String NOT_SURE_FILE_PATH = "notSureFilePath";
+public static final String ALARM_TAG_INDEX = "alarmTagIndex";
+public static final String ALARM_ID_INDEX = "alarmIdIndex";
 }
