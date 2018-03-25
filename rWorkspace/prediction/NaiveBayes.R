@@ -1,8 +1,5 @@
 # Naive Bayes
 
-
-
-
 #Read file and get training and test set 
 read_file_func <- function(inputfiledirname ,datatype){
  if(datatype == "training"){
@@ -44,10 +41,10 @@ read_file_func <- function(inputfiledirname ,datatype){
 
 
 
-CustomNaiveBayesFunc<-function(input_file_path){
+CustomNaiveBayesFunc<-function(input_file_path ,source_of_other_files_path){
   setwd(input_file_path)
-  source("filename_constants.R")
-  source("logger.R")
+  source(paste0(source_of_other_files_path,'/',"filename_constants.R"))
+  source(paste0(source_of_other_files_path,'/',"logger.R"))
   
   library(e1071)
 # function to read the csv of training set
@@ -89,9 +86,11 @@ for (file in filenames) {
   }
   #Writing the result to csv
   write.csv(test_set,file = paste0("result",file ,".csv"),row.names = FALSE,quote = FALSE)
+  
 }
 
   
 }
-CustomNaiveBayesFunc('C:/R_Workspace/FinalFiles')
+#CustomNaiveBayesFunc('C:/R_Workspace/FinalFiles')
+CustomNaiveBayesFunc('C:/Workspace_alarmflood/alarm-food-analysis/merged_file','C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/prediction')
 
