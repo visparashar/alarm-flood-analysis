@@ -48,7 +48,7 @@ public class UploadController {
 
     @GetMapping("/uploadStatus")
     public String uploadStatus() {
-        return "AlarmHomePage1";
+        return "AlarmHomePage";
     }
 
 }
