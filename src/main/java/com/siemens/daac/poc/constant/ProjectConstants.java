@@ -8,5 +8,14 @@ public class ProjectConstants {
 	
 	public static final String R_PREDICTION_ALGO="prediction";
 	
+	public static final String R_WORKSPACE_FOLDER_NAME="rWorkspace";
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
