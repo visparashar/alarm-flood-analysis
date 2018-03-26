@@ -12,6 +12,13 @@ public class ProjectConstants {
 	
 	
 	
+//	common constants
+	public static final String TRUE ="true";
+	public static final String FALSE="false";
+	public static final String TRAINING_SET_DIR_NAME="training_data";
+	
+	
+	
 	
 	
 	

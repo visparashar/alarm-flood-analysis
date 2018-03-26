@@ -85,7 +85,9 @@ for (file in filenames) {
     test_set =cbind(test_set ,Status=0)
   }
   #Writing the result to csv
-  write.csv(test_set,file = paste0("result",file ,".csv"),row.names = FALSE,quote = FALSE)
+  outputfilepath ='C:/Workspace_alarmflood/alarm-food-analysis/merged_file/predictedData'
+  outputfilepath=paste0(outputfilepath,'/',file,'.csv')
+  write.csv(test_set,file = outputfilepath,row.names = FALSE,quote = FALSE)
   
 }
 

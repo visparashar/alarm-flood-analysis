@@ -12,8 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import com.siemens.daac.poc.constant.ProjectConstants;
+
 public class CSVMergeUtil {
-	
+	static final Logger logger  = Logger.getLogger(CSVMergeUtil.class);
+
 	private static String readProperty(String propName) {
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -35,36 +40,35 @@ public class CSVMergeUtil {
 		}
 		return propValue;
 	}
-	public static void main(String[] args) throws IOException {
-		
-		File folder = new File(readProperty(CSVReaderConstant.MERGED_FILE_PATH));
+
+	public static boolean merge(String filePath) throws IOException {
+		File folder = new File(filePath);
 		File[] listOfFiles = folder.listFiles();
-	    List<Path> paths=new ArrayList<Path>();
-		    for (int i = 0; i < listOfFiles.length; i++) {
-		    {
-		    	if(listOfFiles[i].isFile())
-		    	paths.add(Paths.get(listOfFiles[i].toString()));
-		    }
-		    
-		    }
-		
-	    List<String> mergedLines = getMergedLines(paths);
-	    Path target = Paths.get("merged_file/training_set/merged.csv");
-	    Files.write(target, mergedLines, Charset.forName("UTF-8"));
-	    System.out.println("File merged successfully");
+		List<Path> paths=new ArrayList<Path>();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if(listOfFiles[i].isFile())
+				paths.add(Paths.get(listOfFiles[i].toString()));
+		}
+		if(logger.isDebugEnabled())
+			logger.debug("CSV Successfully Merged");
+		List<String> mergedLines = getMergedLines(paths);
+		String trainingSetLocation =filePath+"/"+ProjectConstants.TRAINING_SET_DIR_NAME+"/training_set.csv";
+		Path target = Paths.get(trainingSetLocation);
+		Files.write(target, mergedLines, Charset.forName("UTF-8"));
+		return true;
 	}
 
 	private static List<String> getMergedLines(List<Path> paths) throws IOException {
-	    List<String> mergedLines = new ArrayList<> ();
-	    for (Path p : paths){
-	        List<String> lines = Files.readAllLines(p, Charset.forName("UTF-8"));
-	        if (!lines.isEmpty()) {
-	            if (mergedLines.isEmpty()) {
-	                mergedLines.add(lines.get(0)); //add header only once
-	            }
-	            mergedLines.addAll(lines.subList(1, lines.size()));
-	        }
-	    }
-	    return mergedLines;
+		List<String> mergedLines = new ArrayList<> ();
+		for (Path p : paths){
+			List<String> lines = Files.readAllLines(p, Charset.forName("UTF-8"));
+			if (!lines.isEmpty()) {
+				if (mergedLines.isEmpty()) {
+					mergedLines.add(lines.get(0)); //add header only once
+				}
+				mergedLines.addAll(lines.subList(1, lines.size()));
+			}
+		}
+		return mergedLines;
 	}
 }

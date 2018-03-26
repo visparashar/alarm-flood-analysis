@@ -1,5 +1,6 @@
 package com.siemens.daac.poc.listener;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
@@ -10,15 +11,20 @@ import com.siemens.daac.poc.model.RInput;
 @Component
 public class RListener {
 	
+	
+	@Autowired
+	RCodeRunner rCodeRunner;
+	
 	@JmsListener(destination =ProjectConstants.R_QUEUE)
 	@SendTo(ProjectConstants.R_RESPONSE_QUEUE)
-	public String handleRCalls(final RInput rInput){
+	public RInput handleRCalls(final RInput rInput){
 //	syso
 		
 //		TODO: Need to call the R worker from here and nee dto check the flow as well
-		System.out.println("recieved message "+rInput);
-		
-		return rInput.toString();
+//		System.out.println("recieved message "+rInput);
+//		TODO: Need to create one ROutput  POJO	
+		rCodeRunner.handleRCalls(rInput);
+		return rInput;
 		
 		
 	}

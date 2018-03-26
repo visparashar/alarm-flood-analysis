@@ -80,7 +80,7 @@ public class CSVReaderUtil {
 				} else {
 					floodStatus = CSVReaderConstant.NOT_SURE;
 				}
-				floodStatusMap.put(entry.getName(), floodStatus);
+				floodStatusMap.put(floodStatus,entry.getName());
 				addColumn(inputFilePath, floodStatus, entry.getName());
 				count = CSVReaderConstant.ZERO;
 			}

@@ -15,13 +15,12 @@ public class RManager {
 	RCaller rCaller ;
 	
 	
-	public  boolean createDumpData(RInput input) {
+	public  boolean sendToQueueForRExecution(RInput input) {
 		
 //		String inputFilePath = "C:/Workspace_alarmflood/alarm-food-analysis/merged_file";
 		
 		String transactionId = UUID.randomUUID().toString();
 		input.setTransactionId(transactionId);
-		input.setStatus("false");
 //		RInput rInput = new RInput(transactionId, inputFilePath, ProjectConstants.R_PREDICTION_ALGO, "","true");
 		return rCaller.sendToR(input);
 	}

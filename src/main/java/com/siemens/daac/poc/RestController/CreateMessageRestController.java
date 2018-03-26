@@ -21,7 +21,7 @@ public class CreateMessageRestController {
 	@PostMapping
 	public Boolean createDumbRequest(@RequestBody RInput input
 			){
-		
-		return manager.createDumpData(input);
+		return false;
+//		return manager.createDumpData(input);
 	}
 }
