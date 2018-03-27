@@ -1,6 +1,10 @@
 package com.siemens.daac.poc.utility;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -19,7 +23,27 @@ public class CommonUtils {
 		return defaultPath;
 	}
 	
-	
+	public static String readProperty(String propName) {
+	Properties prop = new Properties();
+	InputStream input = null;
+	String propValue = null;
+	try {
+		input = new FileInputStream("src/main/resources/application.properties");
+		prop.load(input);
+		propValue = prop.getProperty(propName);
+	} catch (IOException ex) {
+
+	} finally {
+		if (input != null) {
+			try {
+				input.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	return propValue;
+}
 	
 	
 	

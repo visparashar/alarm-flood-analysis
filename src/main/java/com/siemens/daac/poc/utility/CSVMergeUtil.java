@@ -1,16 +1,15 @@
 package com.siemens.daac.poc.utility;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -18,28 +17,6 @@ import com.siemens.daac.poc.constant.ProjectConstants;
 
 public class CSVMergeUtil {
 	static final Logger logger  = Logger.getLogger(CSVMergeUtil.class);
-
-	private static String readProperty(String propName) {
-		Properties prop = new Properties();
-		InputStream input = null;
-		String propValue = null;
-		try {
-			input = new FileInputStream("src/main/resources/application.properties");
-			prop.load(input);
-			propValue = prop.getProperty(propName);
-		} catch (IOException ex) {
-
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return propValue;
-	}
 
 	public static boolean merge(String filePath) throws IOException {
 		File folder = new File(filePath);
@@ -52,10 +29,21 @@ public class CSVMergeUtil {
 		if(logger.isDebugEnabled())
 			logger.debug("CSV Successfully Merged");
 		List<String> mergedLines = getMergedLines(paths);
-		String trainingSetLocation =filePath+"/"+ProjectConstants.TRAINING_SET_DIR_NAME+"/training_set.csv";
-		Path target = Paths.get(trainingSetLocation);
-		Files.write(target, mergedLines, Charset.forName("UTF-8"));
-		return true;
+		String trainingSetLocation =filePath+ProjectConstants.TRAINING_SET_DIR_NAME;
+		File dir = new File(trainingSetLocation);
+		if(!dir.exists())
+			dir.mkdirs();
+		Path target = Paths.get(trainingSetLocation+"/"+ProjectConstants.TRAINING_SET_CSV_NAME);
+		Path temp =Files.write(target, mergedLines, Charset.forName("UTF-8"));
+//	move file from one location to archievelocation	
+		if(temp!=null) {
+			String toLocation =CommonUtils.readProperty("archived-file-path");
+			
+			if(moveFileToDestination(filePath, toLocation))
+				return true;
+			
+		}
+		return false;
 	}
 
 	private static List<String> getMergedLines(List<Path> paths) throws IOException {
@@ -70,5 +58,27 @@ public class CSVMergeUtil {
 			}
 		}
 		return mergedLines;
+	}
+	
+//	move the input file to archieved folder
+	public static boolean moveFileToDestination(String fromLocation , String toLocation) throws IOException {
+		File fromLocationDir = new File(fromLocation);
+		if(fromLocationDir.isDirectory())
+		{
+			File toLocationDir = new File(toLocation);
+			if(!toLocationDir.exists())
+				toLocationDir.mkdirs();
+			File[] listOfFiles = fromLocationDir.listFiles();
+			List<Path> paths=new ArrayList<Path>();
+			for (int i = 0; i < listOfFiles.length; i++) {
+				System.out.println(listOfFiles[i].getName());
+				if(listOfFiles[i].isFile()) {
+					System.out.println(toLocation+listOfFiles[i].getName());
+					Files.move(Paths.get(listOfFiles[i].toString()),Paths.get(toLocation).resolve(listOfFiles[i].getName()),StandardCopyOption.REPLACE_EXISTING);
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

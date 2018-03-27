@@ -19,6 +19,7 @@ import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.model.RInput;
 import com.siemens.daac.poc.service.CSVFileProcessorService;
 import com.siemens.daac.poc.service.RManager;
+import com.siemens.daac.poc.utility.CSVMergeUtil;
 
 @Controller
 public class UploadController {
@@ -26,14 +27,24 @@ public class UploadController {
 	@Autowired
 	CSVFileProcessorService csvFileProcessorService;
 	
+	@Value("${r-prediction-folder-location}")
+	String rPredictionFolderLocation;
+	
 	@Value("${r-prediction-output-folder-location}")
 	String rOutputFolderLocation;
+	
+	@Value("${mergedFilePath}")
+	String mergedFilePath;
+	
+	@Value("${archived-file-path}")
+	String archievedFileLocation;
+	
 	
 	@Autowired
 	RManager rManager;
 
+	String defaultWorkspace=System.getProperty("user.dir");
 	//Save the uploaded file to this folder
-
 	@PostMapping("/upload") // //new annotation since 4.3
 	public String singleFileUpload(@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
@@ -44,21 +55,27 @@ public class UploadController {
 		}
 
 		try {
-			String defaultWorkspace=System.getProperty("user.dir");
-			defaultWorkspace +="/data/input_data/";
-			defaultWorkspace = defaultWorkspace.replace(File.separator, "/");
-			String UPLOADED_FOLDER = defaultWorkspace;
+			String UploadedFolderLocation =defaultWorkspace+"/data/input_data/";
+			UploadedFolderLocation = UploadedFolderLocation.replace(File.separator, "/");
 			// Get the file and save it somewhere
 			byte[] bytes = file.getBytes();
-			Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+			File directory = new File(UploadedFolderLocation);
+			if (!directory.exists()) {
+				directory.mkdir();
+			}
+			Path path = Paths.get(UploadedFolderLocation + file.getOriginalFilename());
 			Files.write(path, bytes);
 			
 // Calling CSVReading Service TO read and extract the data ;
-			if(csvFileProcessorService.read(UPLOADED_FOLDER + file.getOriginalFilename()))
+			if(csvFileProcessorService.read(UploadedFolderLocation +"/"+ file.getOriginalFilename()))
 			{
-				String trainingSetInitialFilePath =defaultWorkspace+"/merged_data";
+				
+//				CSVMergeUtil.moveFileToDestination(UploadedFolderLocation, archievedFileLocation);
+				String trainingSetInitialFilePath =mergedFilePath;
 				csvFileProcessorService.merge(trainingSetInitialFilePath);
-				callRProcess(trainingSetInitialFilePath);
+//				setup r prequesities for R to be run
+				setUpPreRequesiteisForR();
+				callRProcess(defaultWorkspace+"/"+trainingSetInitialFilePath);
 			}
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded '" + file.getOriginalFilename() + "'");
@@ -71,12 +88,21 @@ public class UploadController {
 	
 	private void callRProcess(String trainingSetPath) {
 		RInput rInput = new RInput();
-		trainingSetPath +="/"+ProjectConstants.TRAINING_SET_DIR_NAME;
+		
+		trainingSetPath +=ProjectConstants.TRAINING_SET_DIR_NAME;
+		trainingSetPath=trainingSetPath.replace(File.separator, "/");
 		rInput.setStatus(ProjectConstants.FALSE);
 		rInput.setInputFilePath(trainingSetPath);
-		rInput.setOutputFilePath(rOutputFolderLocation);
+		rInput.setOutputFilePath(rPredictionFolderLocation);
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
 		rManager.sendToQueueForRExecution(rInput);
+	}
+	
+	private void setUpPreRequesiteisForR() {
+		
+		File file = new File(rOutputFolderLocation);
+		if(!file.exists())
+			file.mkdir();
 	}
 
 

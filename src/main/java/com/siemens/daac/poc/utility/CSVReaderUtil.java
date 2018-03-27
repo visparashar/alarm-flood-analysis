@@ -118,7 +118,7 @@ public class CSVReaderUtil {
 					}
 					File directory = new File(filePath);
 					if (!directory.exists()) {
-						directory.mkdir();
+						directory.mkdirs();
 					}
 
 					file2 = new File(filePath + fileName);

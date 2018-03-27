@@ -1,4 +1,4 @@
-package com.siemens.daac.poc.listener;
+package com.siemens.daac.poc.worker;
 
 
 
@@ -17,23 +17,28 @@ import com.siemens.daac.poc.utility.RConnector;
 
 @Component
 public class RCodeRunner {
-	
-	@Value("${r-prediction-output-folder-location}")
-	private String defaultPredicationPath;
 
+	@Value("${r-prediction-folder-location}")
+	private String predictionDefaultLocation;
+
+	@Value("${r-prediction-output-folder-location}")
+	private String defaultPredictionOutputLocation;
 	private static final Logger logger = Logger.getLogger(RCodeRunner.class);
 
 	//	TODO : To run this program you need to adde REngine and Rserve in your classpath
 	public void handleRCalls(RInput rinput){
 
-//		RConnection rConnection = null;
+		//		RConnection rConnection = null;
 		try {
 			if(rinput.getInputFilePath()!=null && !rinput.getInputFilePath().isEmpty() 
 					&& rinput.getAlgorithmType()!=null && !rinput.getAlgorithmType().isEmpty()){
 				if(logger.isDebugEnabled())
 					logger.debug("[RCodeRunner] Creating RConnection ");
+				String outputFilePath =defaultPredictionOutputLocation;
 				RConnection connector = RConnector.getConnection("localhost", 6311);
-
+				if(rinput.getOutputFilePath()!=null && rinput.getOutputFilePath().isEmpty())
+					outputFilePath =rinput.getOutputFilePath();
+				outputFilePath.replace(File.separator, "/");
 				if(connector.isConnected()){
 					if(logger.isDebugEnabled())
 						logger.debug("---Successfully created RConnection ----");
@@ -49,27 +54,27 @@ public class RCodeRunner {
 					}
 					if(logger.isDebugEnabled())
 						logger.info("Calling the Source function of R ");
-					
+
 					String sourceRStatement ="source('"+predictionAlgoPath+"')";
-//					calling the source using try eval
+					//					calling the source using try eval
 					REXP rResponseObject = connector.parseAndEval(
-							 "try(eval("+sourceRStatement+"),silent=TRUE)");
+							"try(eval("+sourceRStatement+"),silent=TRUE)");
 					if (rResponseObject.inherits("try-error")) {
 						logger.error("R Serve Eval Exception : "+rResponseObject.asString());
 					}
-					
-//					rConnection.eval("source('C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/prediction/NaiveBayes.R')");
-//					String inputFilePath ="C:/Workspace_alarmflood/alarm-food-analysis/merged_file";
-					
-					String name ="CustomNaiveBayesFunc('"+inputFilePath+"','"+defaultPredicationPath+"')";
+
+					//					rConnection.eval("source('C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/prediction/NaiveBayes.R')");
+					//					String inputFilePath ="C:/Workspace_alarmflood/alarm-food-analysis/merged_file";
+
+					String name ="CustomNaiveBayesFunc('"+inputFilePath+"','"+predictionDefaultLocation+"','"+outputFilePath+"')";
 					System.out.println(name);
 					REXP rFuncCallResponse = connector.parseAndEval(
-							 "try(eval("+name+"),silent=TRUE)");
-					
+							"try(eval("+name+"),silent=TRUE)");
+
 					if (rFuncCallResponse.inherits("try-error")) {
 						logger.error("Exception occurred after calling CustomNaiveBayesFunc : "+rResponseObject.asString());
 					}
-//					rConnection.eval("CustomNaiveBayesFunc('"+inputFilePath+"','C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/prediction')");
+					//					rConnection.eval("CustomNaiveBayesFunc('"+inputFilePath+"','C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/prediction')");
 					//		System.out.println(result);
 				}
 			}else{
