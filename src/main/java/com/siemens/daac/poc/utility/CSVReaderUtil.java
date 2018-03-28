@@ -29,6 +29,8 @@ import java.util.zip.ZipFile;
  *
  */
 public class CSVReaderUtil {
+	public static int trueCount=0;
+	public static int falseCount=0;
 	private static double count = 0;
 	private static String MERGED_FILE_PATH = readProperty(CSVReaderConstant.MERGED_FILE_PATH);
 	private static String NOT_SURE_FILE_PATH = readProperty(CSVReaderConstant.NOT_SURE_FILE_PATH);
@@ -63,6 +65,8 @@ public class CSVReaderUtil {
 		double percentageOfTrueFlood = 0.0;
 		BufferedReader br = null;
 		try {
+			trueCount = 0;
+			falseCount = 0;
 			ZipFile zipFile = new ZipFile(inputFilePath);
 
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -75,12 +79,14 @@ public class CSVReaderUtil {
 				percentageOfTrueFlood = (inputSet.size() / count) * CSVReaderConstant.HUNDRED;
 				if (percentageOfTrueFlood > CSVReaderConstant.SIXTY) {
 					floodStatus = CSVReaderConstant.ONE_STRING;
+					trueCount = trueCount++;
 				} else if (percentageOfTrueFlood < CSVReaderConstant.THIRTY) {
 					floodStatus = CSVReaderConstant.ZERO_STRING;
+					falseCount = falseCount++;
 				} else {
 					floodStatus = CSVReaderConstant.NOT_SURE;
 				}
-				floodStatusMap.put(floodStatus,entry.getName());
+				floodStatusMap.put(entry.getName(),floodStatus);
 				addColumn(inputFilePath, floodStatus, entry.getName());
 				count = CSVReaderConstant.ZERO;
 			}

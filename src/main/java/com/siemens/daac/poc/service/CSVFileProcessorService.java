@@ -22,7 +22,7 @@ public class CSVFileProcessorService implements FileProcessorService{
 		if(filePath!=null && !filePath.isEmpty()) {
 			HashMap<String,String> fileNameWithStatusMap = (HashMap<String, String>) CSVReaderUtil.processInputFile(filePath);
 //			TODO : There should be atleast one true and one false
-			if(fileNameWithStatusMap.containsKey("1"))
+			if(fileNameWithStatusMap.values().contains("1") && fileNameWithStatusMap.values().contains("0"))
 			{
 				return true;
 			}else {
