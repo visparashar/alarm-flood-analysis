@@ -65,6 +65,8 @@ print(paste("input training data ",test_data_file_path))
 
 filenames <- list.files(path = test_data_file_path , pattern = '*.csv')
 print(filenames)
+true_count=0
+false_count=0
 for (file in filenames) {
   new_path =paste0(test_data_file_path,"/",file)
  
@@ -87,16 +89,19 @@ for (file in filenames) {
 
   if(count/nrow(test_set)>=.5){
     test_set =cbind(test_set ,Status=1)
+    true_count=true_count+1
   }else{
     test_set =cbind(test_set ,Status=0)
+    false_count=false_count+1
   }
   #Writing the result to csv
   # outputfilepath =paste0(output_file_path,'/','prediction_data')
   outputfilepath=paste0(output_file_path,file,'.csv')
   print(outputfilepath)
   write.csv(test_set,file = outputfilepath,row.names = FALSE,quote = FALSE)
-  
+ 
 }
+return(cbind(true=true_count,false=false_count))
 
   
 }

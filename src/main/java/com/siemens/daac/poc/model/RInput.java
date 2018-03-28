@@ -16,12 +16,8 @@ public class RInput implements Serializable {
 	private String inputFilePath;
 	private String algorithmType;
 	private String outputFilePath;
-	@JsonIgnore
-	private String status;
-	
 	
 	public RInput() {
-		
 	}
 	
 	public RInput(String transactionId, String inputFilePath, String algorithmType, String outputFilePath,
@@ -31,7 +27,6 @@ public class RInput implements Serializable {
 		this.inputFilePath = inputFilePath;
 		this.algorithmType = algorithmType;
 		this.outputFilePath = outputFilePath;
-		this.status = status;
 	}
 	public String getTransactionId() {
 		return transactionId;
@@ -57,16 +52,11 @@ public class RInput implements Serializable {
 	public void setOutputFilePath(String outputFilePath) {
 		this.outputFilePath = outputFilePath;
 	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
+	
 	@Override
 	public String toString() {
 		return "RInput [transactionId=" + transactionId + ", inputFilePath=" + inputFilePath + ", algorithmType="
-				+ algorithmType + ", outputFilePath=" + outputFilePath + ", status=" + status + "]";
+				+ algorithmType + ", outputFilePath=" + outputFilePath +"]";
 	}
 	
 	

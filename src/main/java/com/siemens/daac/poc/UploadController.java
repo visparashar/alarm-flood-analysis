@@ -90,8 +90,7 @@ public class UploadController {
 		RInput rInput = new RInput();
 		
 		trainingSetPath +=ProjectConstants.TRAINING_SET_DIR_NAME;
-		trainingSetPath=trainingSetPath.replace(File.separator, "/");
-		rInput.setStatus(ProjectConstants.FALSE);
+		trainingSetPath=trainingSetPath.replaceAll(File.separator, "/");
 		rInput.setInputFilePath(trainingSetPath);
 		rInput.setOutputFilePath(rPredictionFolderLocation);
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
