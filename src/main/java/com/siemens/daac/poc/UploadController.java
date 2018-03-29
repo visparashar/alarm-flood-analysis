@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +20,6 @@ import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.model.RInput;
 import com.siemens.daac.poc.service.CSVFileProcessorService;
 import com.siemens.daac.poc.service.RManager;
-import com.siemens.daac.poc.utility.CSVMergeUtil;
 
 @Controller
 public class UploadController {
@@ -61,7 +61,7 @@ public class UploadController {
 			byte[] bytes = file.getBytes();
 			File directory = new File(UploadedFolderLocation);
 			if (!directory.exists()) {
-				directory.mkdir();
+				directory.mkdirs();
 			}
 			Path path = Paths.get(UploadedFolderLocation + file.getOriginalFilename());
 			Files.write(path, bytes);
@@ -105,9 +105,19 @@ public class UploadController {
 	}
 
 
-	@GetMapping("/uploadStatus")
+/*	@GetMapping("/uploadStatus")
 	public String uploadStatus() {
 		return "AlarmHomePage";
-	}
+	}*/
+
+
+    @GetMapping("/uploadStatus")
+    public String uploadStatus(ModelMap m) {
+    	Integer trueflood=50;
+    	Integer falseflood=10;
+    	m.addAttribute("trueflood",trueflood);
+    	m.addAttribute("falseflood",falseflood);
+        return "AlarmHomePage";
+    }
 
 }
