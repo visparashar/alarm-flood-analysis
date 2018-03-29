@@ -3,6 +3,12 @@
 <head>
 <title>Alarm Flood Analysis</title>
 <link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+<script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script>
+    zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
+    ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
+  </script>
 </head>
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -38,7 +44,7 @@ function Validate(oForm) {
 
 <body>
 <div class="container">
-<h1>Alarm Flood Analysis</h1>
+<h1><B>Alarm Flood Analysis</B></h1>
 
 <form method="POST" action="/upload" onsubmit="return Validate(this);" enctype="multipart/form-data">
     <input type="file" name="file"   accept=".zip"/><br/><br/>
@@ -48,9 +54,70 @@ function Validate(oForm) {
 
 
 <div th:if="${message}">
-<h1>Status Of Uploaded File</h1>
-    <h2 th:text="${message}"/>
-    
+<B>Status Of Uploaded File</B>
+    <h4 th:text="${message}"/>
+<br/>
+<div class="container" style="border:1px solid black">  
+     <div id='myChart'></div>
+  <script th:inline="javascript">
+  /*<![CDATA[*/
+  var tf = /*[[${trueflood}]]*/ 'default';
+  var ff = /*[[${falseflood}]]*/ 'default';
+   var myConfig = {
+      "type": "pie",
+      "title": {
+        "text": "Alarm Flood Information"
+      },
+      "subtitle": {
+        "text": "Hover over the pie slices for true/false floods",
+        "font-weight": "normal"
+      },
+      "plot": {
+        "tooltip": {
+          "text": "%t: %v (%npv%)",
+          "font-color": "black",
+          "font-family": "Georgia",
+          "text-alpha": 1,
+          "background-color": "white",
+          "alpha": 0.7,
+          "border-width": 1,
+          "border-color": "#cccccc",
+          "line-style": "dotted",
+          "border-radius": "10px",
+          "padding": "10%",
+          "placement": "node:out" //"node:out" or "node:center"
+        },
+        "value-box": {
+          "visible": false
+        },
+        "border-width": 1,
+        "border-color": "#cccccc",
+        "line-style": "dotted"
+      },
+      "plotarea": {
+        "margin-top": "12%"
+      },
+      "series": [{
+        "values": [tf],
+        "background-color": "#cc0000",
+        "text": "True Flood"
+      }, {
+        "values": [ff],
+        "background-color": "#ff3300",
+        "text": "False Flood"
+      }]
+    };
+
+    zingchart.render({
+      id: 'myChart',
+      data: myConfig,
+      height: 400,
+      width: "100%"
+    });
+    /*]]>*/
+  </script>
+ </div>  
+ <br/>
  <form action="/train">
  
   <input type="submit" value="Train Data" class="btn-danger btn"/>
