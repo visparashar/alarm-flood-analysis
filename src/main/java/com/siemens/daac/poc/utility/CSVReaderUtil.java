@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -29,8 +30,8 @@ import java.util.zip.ZipFile;
  *
  */
 public class CSVReaderUtil {
-	public static int trueCount=0;
-	public static int falseCount=0;
+	public static AtomicInteger trueCount = new AtomicInteger(0);
+	public static AtomicInteger falseCount= new AtomicInteger(0);
 	private static double count = 0;
 	private static String MERGED_FILE_PATH = readProperty(CSVReaderConstant.MERGED_FILE_PATH);
 	private static String NOT_SURE_FILE_PATH = readProperty(CSVReaderConstant.NOT_SURE_FILE_PATH);
@@ -65,8 +66,8 @@ public class CSVReaderUtil {
 		double percentageOfTrueFlood = 0.0;
 		BufferedReader br = null;
 		try {
-			trueCount = 0;
-			falseCount = 0;
+			trueCount = new AtomicInteger(0);
+			falseCount = new AtomicInteger(0);
 			ZipFile zipFile = new ZipFile(inputFilePath);
 
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -79,10 +80,10 @@ public class CSVReaderUtil {
 				percentageOfTrueFlood = (inputSet.size() / count) * CSVReaderConstant.HUNDRED;
 				if (percentageOfTrueFlood > CSVReaderConstant.SIXTY) {
 					floodStatus = CSVReaderConstant.ONE_STRING;
-					trueCount = trueCount++;
+					trueCount.incrementAndGet();
 				} else if (percentageOfTrueFlood < CSVReaderConstant.THIRTY) {
 					floodStatus = CSVReaderConstant.ZERO_STRING;
-					falseCount = falseCount++;
+					falseCount.incrementAndGet();
 				} else {
 					floodStatus = CSVReaderConstant.NOT_SURE;
 				}
