@@ -22,7 +22,6 @@ callRFunction <- function(
 	{
 		source(paste0(source_of_other_lib,'/',CONST_PATH_LOC_PREDICTION,'/',CONST_NAIVE_BAYES))
 		
-		
 	}
 	
 	
