@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.siemens.daac.poc.constant.CSVReaderConstant;
+
 /**
  * 
  */
@@ -154,7 +156,7 @@ public class CSVReaderUtil {
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		processInputFile("ALARM_LIST_ALARM_FLOODS_2016-12-01.zip");
-	}
+	}*/
 }

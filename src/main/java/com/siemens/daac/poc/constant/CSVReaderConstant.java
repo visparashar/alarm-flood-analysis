@@ -1,4 +1,4 @@
-package com.siemens.daac.poc.utility;
+package com.siemens.daac.poc.constant;
 
 public class CSVReaderConstant {
 	public static final String FLOOD_STATUS = "floodStatus";

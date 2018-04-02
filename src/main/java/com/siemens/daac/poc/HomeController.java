@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.siemens.daac.poc.model.Flood;
+
 @Controller
 public class HomeController {
 	
