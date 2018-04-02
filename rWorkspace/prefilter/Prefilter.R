@@ -1,9 +1,13 @@
+
+
 PrefilterFunc <-
   function(input_file_path ,
            prefilter_result_path,
            msw_result_path,source_of_other_files_path) {
     source(paste0(source_of_other_files_path,'/',"logger.R"))
+	
     #assuming a thresold value
+	#changed the thresold value using property file - vishal
     thresold = 0.6
     setwd(input_file_path)
     

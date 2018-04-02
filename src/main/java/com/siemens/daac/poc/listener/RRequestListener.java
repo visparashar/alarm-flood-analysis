@@ -28,7 +28,6 @@ public class RRequestListener {
 		
 		return rCodeRunner.handleRCalls(rInput);
 		
-		
 	}
 
 }

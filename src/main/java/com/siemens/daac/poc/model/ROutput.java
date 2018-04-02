@@ -1,7 +1,7 @@
 package com.siemens.daac.poc.model;
 
 public class ROutput {
-	
+
 	private int trueFloodCount;
 	private int falseFloodCount;
 	private String status;
@@ -42,7 +42,7 @@ public class ROutput {
 		return "ROutput [trueFloodCount=" + trueFloodCount + ", falseFloodCount=" + falseFloodCount + ", status="
 				+ status + ", errorMsg=" + errorMsg + ", transactionId=" + transactionId + "]";
 	}
-	
-	
+
+
 
 }
