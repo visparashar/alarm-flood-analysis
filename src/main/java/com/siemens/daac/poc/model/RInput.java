@@ -16,6 +16,7 @@ public class RInput implements Serializable {
 	private String inputFilePath;
 	private String algorithmType;
 	private String outputFilePath;
+	private boolean isRunForTraining;
 	
 	public RInput() {
 	}
@@ -53,6 +54,14 @@ public class RInput implements Serializable {
 		this.outputFilePath = outputFilePath;
 	}
 	
+	public boolean isRunForTraining() {
+		return isRunForTraining;
+	}
+
+	public void setRunForTraining(boolean isRunForTraining) {
+		this.isRunForTraining = isRunForTraining;
+	}
+
 	@Override
 	public String toString() {
 		return "RInput [transactionId=" + transactionId + ", inputFilePath=" + inputFilePath + ", algorithmType="

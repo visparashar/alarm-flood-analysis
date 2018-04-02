@@ -23,23 +23,23 @@ import com.siemens.daac.poc.service.RManager;
 
 @Controller
 public class UploadController {
-	
+
 	@Autowired
 	CSVFileProcessorService csvFileProcessorService;
-	
+
 	@Value("${r-prediction-folder-location}")
 	String rPredictionFolderLocation;
-	
+
 	@Value("${r-prediction-output-folder-location}")
 	String rOutputFolderLocation;
-	
+
 	@Value("${mergedFilePath}")
 	String mergedFilePath;
-	
+
 	@Value("${archived-file-path}")
 	String archievedFileLocation;
-	
-	
+
+
 	@Autowired
 	RManager rManager;
 
@@ -48,7 +48,7 @@ public class UploadController {
 	@PostMapping("/upload") // //new annotation since 4.3
 	public String singleFileUpload(@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
-		
+
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
@@ -65,15 +65,14 @@ public class UploadController {
 			}
 			Path path = Paths.get(UploadedFolderLocation + file.getOriginalFilename());
 			Files.write(path, bytes);
-			
-// Calling CSVReading Service TO read and extract the data ;
+
+			// Calling CSVReading Service TO read and extract the data ;
 			if(csvFileProcessorService.read(UploadedFolderLocation +"/"+ file.getOriginalFilename()))
 			{
-				
-//				CSVMergeUtil.moveFileToDestination(UploadedFolderLocation, archievedFileLocation);
+				//				CSVMergeUtil.moveFileToDestination(UploadedFolderLocation, archievedFileLocation);
 				String trainingSetInitialFilePath =mergedFilePath;
 				csvFileProcessorService.merge(trainingSetInitialFilePath);
-//				setup r prequesities for R to be run
+				//				setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
 				callRProcess(defaultWorkspace+"/"+trainingSetInitialFilePath);
 			}
@@ -84,11 +83,11 @@ public class UploadController {
 		}
 		return "redirect:/uploadStatus";
 	}
-	
-	
+
+
 	private void callRProcess(String trainingSetPath) {
 		RInput rInput = new RInput();
-		
+
 		trainingSetPath +=ProjectConstants.TRAINING_SET_DIR_NAME;
 		trainingSetPath=trainingSetPath.replaceAll(File.separator, "/");
 		rInput.setInputFilePath(trainingSetPath);
@@ -96,28 +95,28 @@ public class UploadController {
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
 		rManager.sendToQueueForRExecution(rInput);
 	}
-	
+
 	private void setUpPreRequesiteisForR() {
-		
+
 		File file = new File(rOutputFolderLocation);
 		if(!file.exists())
 			file.mkdir();
 	}
 
 
-/*	@GetMapping("/uploadStatus")
+	/*	@GetMapping("/uploadStatus")
 	public String uploadStatus() {
 		return "AlarmHomePage";
 	}*/
 
 
-    @GetMapping("/uploadStatus")
-    public String uploadStatus(ModelMap m) {
-    	Integer trueflood=50;
-    	Integer falseflood=10;
-    	m.addAttribute("trueflood",trueflood);
-    	m.addAttribute("falseflood",falseflood);
-        return "AlarmHomePage";
-    }
+	@GetMapping("/uploadStatus")
+	public String uploadStatus(ModelMap m) {
+		Integer trueflood=50;
+		Integer falseflood=10;
+		m.addAttribute("trueflood",trueflood);
+		m.addAttribute("falseflood",falseflood);
+		return "AlarmHomePage";
+	}
 
 }

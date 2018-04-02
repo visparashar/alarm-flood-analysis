@@ -50,6 +50,9 @@ public class RCodeRunner {
 					System.out.println(connector.needLogin());
 					String inputFilePath =rinput.getInputFilePath();
 					String rWorkSpacePath=CommonUtils.getRWorkspacePath();
+					
+//					TODO: this is added for the model or training running of the 
+					
 					String predictionAlgoPath = rWorkSpacePath+"/prediction/NaiveBayes.R";
 					predictionAlgoPath =predictionAlgoPath.replaceAll(File.separator, "/");
 					if(logger.isDebugEnabled()){
