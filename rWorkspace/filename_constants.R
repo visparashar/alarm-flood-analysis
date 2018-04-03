@@ -12,6 +12,8 @@ CONST_TRAINING_SET ="training"
 CONST_TEST_SET="test"
 
 CONST_NAIVE_BAYES="NaiveBayes.R"
+CONST_PREFILTER_FILENAME="Prefilter.R"
+CONST_MSW_CLUSTER_FILENAME="MswAlgorithm.R"
 
 
 # Algorithm Names

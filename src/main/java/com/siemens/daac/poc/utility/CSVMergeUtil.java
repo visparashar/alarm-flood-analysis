@@ -3,7 +3,6 @@ package com.siemens.daac.poc.utility;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,12 +10,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.siemens.daac.poc.constant.ProjectConstants;
 
 public class CSVMergeUtil {
-	static final Logger logger  = Logger.getLogger(CSVMergeUtil.class);
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
 	public static boolean merge(String filePath) throws IOException {
 		File folder = new File(filePath);
@@ -27,9 +26,9 @@ public class CSVMergeUtil {
 				paths.add(Paths.get(listOfFiles[i].toString()));
 		}
 		if(logger.isDebugEnabled())
-			logger.debug("CSV Successfully Merged");
+			logger.debug("CSV  Merging Initiated");
 		List<String> mergedLines = getMergedLines(paths);
-		String trainingSetLocation =filePath+ProjectConstants.TRAINING_SET_DIR_NAME;
+		String trainingSetLocation =filePath+"/"+ProjectConstants.TRAINING_SET_DIR_NAME;
 		File dir = new File(trainingSetLocation);
 		if(!dir.exists())
 			dir.mkdirs();
@@ -81,4 +80,6 @@ public class CSVMergeUtil {
 		}
 		return false;
 	}
+	
+	
 }

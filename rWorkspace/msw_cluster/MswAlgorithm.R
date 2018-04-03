@@ -64,9 +64,9 @@ CalculateMSWMatrix <-  function(input_file_path ,
 }
 
 
-CalculateMSWMatrix(
-  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
-  "C:/Users/Khushboo/Documents/msw_cluster/msw_textdataset",
-  "C:/Users/Khushboo/Documents/msw_cluster/similarityindex_matrix",
-  "C:/Users/Khushboo/Documents/prediction"
-)
+#CalculateMSWMatrix(
+#  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
+#  "C:/Users/Khushboo/Documents/msw_cluster/msw_textdataset",
+#  "C:/Users/Khushboo/Documents/msw_cluster/similarityindex_matrix",
+#  "C:/Users/Khushboo/Documents/prediction"
+#)

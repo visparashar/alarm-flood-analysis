@@ -93,9 +93,9 @@ PrefilterFunc <-
     
   }
 
-PrefilterFunc(
-  "C:/Users/Khushboo/Documents/prefilter/alarm_dataset",
-  "C:/Users/Khushboo/Documents/prefilter/prefilter_results",
-  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
-  "C:/Users/Khushboo/Documents/prediction"
-)
+#PrefilterFunc(
+#  "C:/Users/Khushboo/Documents/prefilter/alarm_dataset",
+#  "C:/Users/Khushboo/Documents/prefilter/prefilter_results",
+#  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
+#  "C:/Users/Khushboo/Documents/prediction"
+#)

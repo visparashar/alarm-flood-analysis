@@ -3,10 +3,9 @@ package com.siemens.daac.poc.service;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
-import com.siemens.daac.poc.constant.CSVReaderConstant;
 import com.siemens.daac.poc.utility.CSVMergeUtil;
 import com.siemens.daac.poc.utility.CSVReaderUtil;
 
@@ -14,7 +13,7 @@ import com.siemens.daac.poc.utility.CSVReaderUtil;
 public class CSVFileProcessorService implements FileProcessorService{
 
 
-	static final Logger logger = Logger.getLogger(CSVFileProcessorService.class);
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
 	@Override
 	public boolean read(String filePath) throws IOException {

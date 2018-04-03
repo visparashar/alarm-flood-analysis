@@ -4,7 +4,7 @@ package com.siemens.daac.poc.worker;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -26,8 +26,8 @@ public class RCodeRunner {
 
 	@Value("${r-prediction-output-folder-location}")
 	private String defaultPredictionOutputLocation;
-	private static final Logger logger = Logger.getLogger(RCodeRunner.class);
 
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 	//	TODO : To run this program you need to adde REngine and Rserve in your classpath
 	public ROutput handleRCalls(RInput rinput){
 		ROutput rOutput = new ROutput();

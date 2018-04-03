@@ -76,6 +76,8 @@ public class CSVReaderUtil {
 
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
+				System.out.println(entry.getName());
+				
 				InputStream inputFS = zipFile.getInputStream(entry);
 				br = new BufferedReader(new InputStreamReader(inputFS));
 				inputSet = br.lines().skip(1).map(mapToItem).collect(Collectors.toSet());
@@ -110,6 +112,8 @@ public class CSVReaderUtil {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 		String filePath = MERGED_FILE_PATH;
+		filePath+=File.separator;
+		filePath=filePath.replaceAll("\\\\", "/");
 		final String lineSep = System.getProperty(CSVReaderConstant.LINE_SEPARATOR);
 
 		try {
@@ -123,14 +127,18 @@ public class CSVReaderUtil {
 				if (fileName.equals(entry.getName())) {
 					File file2 = null;
 					if (floodStatus.equals(CSVReaderConstant.NOT_SURE)) {
-						filePath = NOT_SURE_FILE_PATH;
+						filePath = NOT_SURE_FILE_PATH+File.separator;
+						filePath =filePath.replaceAll("\\\\", "/");
+						
 					}
 					File directory = new File(filePath);
 					if (!directory.exists()) {
 						directory.mkdirs();
 					}
-
-					file2 = new File(filePath + fileName);
+					
+					String[] arr =fileName.split("/");
+					if((arr.length==1 && arr[0].contains(".csv")) || (arr.length>1 && arr[arr.length-1].contains(".csv") )){
+					file2 = new File(filePath + arr[arr.length-1]);
 					br = new BufferedReader(new InputStreamReader(inputFS));
 					bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file2)));
 					String line = null;
@@ -146,6 +154,7 @@ public class CSVReaderUtil {
 					}
 
 				}
+				}
 			}
 		} finally {
 			if (br != null)
@@ -159,4 +168,6 @@ public class CSVReaderUtil {
 	/*public static void main(String[] args) throws IOException {
 		processInputFile("ALARM_LIST_ALARM_FLOODS_2016-12-01.zip");
 	}*/
+	
+	
 }

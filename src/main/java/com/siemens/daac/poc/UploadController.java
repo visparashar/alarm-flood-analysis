@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ import com.siemens.daac.poc.service.RManager;
 @Controller
 public class UploadController {
 
+
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+
 	@Autowired
 	CSVFileProcessorService csvFileProcessorService;
 
@@ -39,6 +43,9 @@ public class UploadController {
 	@Value("${archived-file-path}")
 	String archievedFileLocation;
 
+	@Value("${user-upload-file-location}")
+	String userInputFileLocation;
+
 
 	@Autowired
 	RManager rManager;
@@ -53,21 +60,25 @@ public class UploadController {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
-
 		try {
-			String UploadedFolderLocation =defaultWorkspace+"/data/input_data/";
-			UploadedFolderLocation = UploadedFolderLocation.replace(File.separator, "/");
+			String UploadedFolderLocation =defaultWorkspace+userInputFileLocation+File.separator;
+			UploadedFolderLocation=UploadedFolderLocation.replaceAll("\\\\", "/");
 			// Get the file and save it somewhere
 			byte[] bytes = file.getBytes();
 			File directory = new File(UploadedFolderLocation);
 			if (!directory.exists()) {
-				directory.mkdirs();
+				if(!directory.mkdirs()){
+					logger.error("[singleFileUpload] There is a problem occurred while creating the upload directory ");
+					redirectAttributes.addFlashAttribute("message",
+							"There is some problem occured please check logs ");
+					return "redirect:/uploadStatus";
+				}
 			}
 			Path path = Paths.get(UploadedFolderLocation + file.getOriginalFilename());
 			Files.write(path, bytes);
 
 			// Calling CSVReading Service TO read and extract the data ;
-			if(csvFileProcessorService.read(UploadedFolderLocation +"/"+ file.getOriginalFilename()))
+			if(csvFileProcessorService.read(UploadedFolderLocation +file.getOriginalFilename()))
 			{
 				//				CSVMergeUtil.moveFileToDestination(UploadedFolderLocation, archievedFileLocation);
 				String trainingSetInitialFilePath =mergedFilePath;
@@ -75,11 +86,19 @@ public class UploadController {
 				//				setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
 				callRProcess(defaultWorkspace+"/"+trainingSetInitialFilePath);
+			}else{
+				logger.error("Please Upload Valid Zip");
+				redirectAttributes.addFlashAttribute("message",
+						"Please Upload Valid Zip ");
+				return "redirect:/uploadStatus";
 			}
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded '" + file.getOriginalFilename() + "'");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Some Problem Occurred "+e.getMessage());
+			redirectAttributes.addFlashAttribute("message",
+					"There is some problem occured please check logs ");
+			return "redirect:/uploadStatus";
 		}
 		return "redirect:/uploadStatus";
 	}
@@ -89,7 +108,7 @@ public class UploadController {
 		RInput rInput = new RInput();
 
 		trainingSetPath +=ProjectConstants.TRAINING_SET_DIR_NAME;
-		trainingSetPath=trainingSetPath.replaceAll(File.separator, "/");
+		trainingSetPath=trainingSetPath.replaceAll("\\\\", "/");
 		rInput.setInputFilePath(trainingSetPath);
 		rInput.setOutputFilePath(rPredictionFolderLocation);
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
@@ -100,7 +119,7 @@ public class UploadController {
 
 		File file = new File(rOutputFolderLocation);
 		if(!file.exists())
-			file.mkdir();
+			file.mkdirs();
 	}
 
 

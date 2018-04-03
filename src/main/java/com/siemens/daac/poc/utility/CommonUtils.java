@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.siemens.daac.poc.constant.ProjectConstants;
 
 public class CommonUtils {
 	
-	final static Logger logger = Logger.getLogger(CommonUtils.class);
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 	
 	public static String getRWorkspacePath(){
 		
