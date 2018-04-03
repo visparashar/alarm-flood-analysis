@@ -74,7 +74,7 @@ public class UploadController {
 					return "redirect:/uploadStatus";
 				}
 			}
-			Path path = Paths.get(UploadedFolderLocation + file.getOriginalFilename());
+			Path path = Paths.get(UploadedFolderLocation+file.getOriginalFilename());
 			Files.write(path, bytes);
 
 			// Calling CSVReading Service TO read and extract the data ;
@@ -121,12 +121,6 @@ public class UploadController {
 		if(!file.exists())
 			file.mkdirs();
 	}
-
-
-	/*	@GetMapping("/uploadStatus")
-	public String uploadStatus() {
-		return "AlarmHomePage";
-	}*/
 
 
 	@GetMapping("/uploadStatus")

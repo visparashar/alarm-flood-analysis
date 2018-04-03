@@ -20,6 +20,11 @@ public class ProjectConstants {
 	public static final String FALSE="false";
 	public static final String TRAINING_SET_DIR_NAME="training_data";
 	public static final String TRAINING_SET_CSV_NAME="training_set.csv";
+	
+	
+	
+//	global variable
+	public static boolean isTrueFloodStatusUpdated =false;
 
 
 

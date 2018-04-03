@@ -2,133 +2,154 @@
 <html xmlns:th="http://thymeleaf.org">
 <head>
 <title>Alarm Flood Analysis</title>
-<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
-<script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
-<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
-  <script>
-    zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
-    ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
-  </script>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+	rel="stylesheet" />
+<!-- Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- Numeric JS -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
 </head>
 <script th:inline="javascript">
-/*<![CDATA[*/
-var _validFileExtensions = [".csv", ".zip"];    
-function Validate(oForm) {
-    var arrInputs = oForm.getElementsByTagName("input");
-    for (var i = 0; i < arrInputs.length; i++) {
-        var oInput = arrInputs[i];
-        if (oInput.type == "file") {
-            var sFileName = oInput.value;
-            if (sFileName.length > 0) {
-                var blnValid = false;
-                for (var j = 0; j < _validFileExtensions.length; j++) {
-                    var sCurExtension = _validFileExtensions[j];
-                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
-                        blnValid = true;
-                        break;
-                    }
-                }
-                
-                if (!blnValid) {
-                    alert("Invalid File Extension");
-                    return false;
-                }
-            }
-        }
-    }
-  
-    return true;
-}
-/*]]>*/
+	/*<![CDATA[*/
+
+	var _validFileExtensions = [ ".csv", ".zip" ];
+	function Validate(oForm) {
+		var arrInputs = oForm.getElementsByTagName("input");
+		for (var i = 0; i < arrInputs.length; i++) {
+			var oInput = arrInputs[i];
+			if (oInput.type == "file") {
+				var sFileName = oInput.value;
+				if (sFileName.length == 0) {
+
+					alert("Please select a file to upload");
+					return false;
+				}
+				if (sFileName.length > 0) {
+					var blnValid = false;
+					for (var j = 0; j < _validFileExtensions.length; j++) {
+						var sCurExtension = _validFileExtensions[j];
+						if (sFileName.substr(
+								sFileName.length - sCurExtension.length,
+								sCurExtension.length).toLowerCase() == sCurExtension
+								.toLowerCase()) {
+							blnValid = true;
+							break;
+						}
+					}
+
+					if (!blnValid) {
+						alert("Invalid File Extension");
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	function showMatrix() {
+
+		document.getElementById('matrix').style.display = 'block';
+	}
+	/*]]>*/
 </script>
 
 <body>
-<div class="container">
-<h1><B>Alarm Flood Analysis</B></h1>
+	<div class="jumbotron text-center"
+		style="padding-top: 4px; padding-bottom: 4px;">
+		<h2>Alarm Flood Analysis</h2>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-3">
+				<B>Load Training Data</B>
+			</div>
+			<div class="col-sm-5">
+				<form method="POST" action="/upload"
+					onsubmit="return Validate(this);" enctype="multipart/form-data">
+					<div class="col-sm-6">
 
-<form method="POST" action="/upload" onsubmit="return Validate(this);" enctype="multipart/form-data">
-    <input type="file" name="file"   accept=".zip"/><br/><br/>
-    <input type="submit" class="btn btn-success" value="Submit" />
-</form>
+						<input type="file" name="file" accept=".zip" />
+					</div>
+					<div class="col-sm-6">
+						<input type="submit" class="btn btn-success btn-sm" value="Submit" />
+					</div>
+				</form>
+
+			</div>
+			<div class="col-sm-3">
+				<B>Click Here To Train Data</B> <input type="submit"
+					value="Train Data" class="btn btn-success btn-sm"
+					onClick="showMatrix()" />
+			</div>
+		</div>
+	</div>
+	<hr/>
+
+
+	<div th:if="${message}">
+		Status Of Uploaded File
+		<h6 th:text="${message}" />
+		<hr/>
+		<div class="row">
+			<div class="col-sm-4">
+				<!--  Left side panel -->
+				<div id="myDiv"></div>
+			</div>
+			<div class="col-sm-8">
+				<!--  Right side panel -->
+
+				<div id="matrix" style="display: none;">
+					<h3>Trained Data Result</h3>
+					<br />
+					<ul class="nav nav-tabs">
+						<li class="active"><a aria-expended="true" data-toggle="tab"
+							href="#sim">Similarity Matrix</a></li>
+						<li><a data-toggle="tab" href="#cluster"
+							aria-expended="false">Cluster Diagram</a></li>
+					</ul>
+					<div class="tab-content">
+						<div id="sim" class="tab-pane fade">
+							<p>Similarity Matrix</p>
+						</div>
+						<div id="cluster" class="tab-pane fade">
+							<p>Cluster Matrix</p>
+						</div>
+					</div>
+				</div>
 
 
 
-<div th:if="${message}">
-<B>Status Of Uploaded File</B>
-    <h4 th:text="${message}"/>
-<br/>
-<div class="container" style="border:1px solid black">  
-     <div id='myChart'></div>
-  <script th:inline="javascript">
-  /*<![CDATA[*/
-  var tf = /*[[${trueflood}]]*/ 'default';
-  var ff = /*[[${falseflood}]]*/ 'default';
-   var myConfig = {
-      "type": "pie",
-      "title": {
-        "text": "Alarm Flood Information"
-      },
-      "subtitle": {
-        "text": "Hover over the pie slices for true/false floods",
-        "font-weight": "normal"
-      },
-      "plot": {
-        "tooltip": {
-          "text": "%t: %v (%npv%)",
-          "font-color": "black",
-          "font-family": "Georgia",
-          "text-alpha": 1,
-          "background-color": "white",
-          "alpha": 0.7,
-          "border-width": 1,
-          "border-color": "#cccccc",
-          "line-style": "dotted",
-          "border-radius": "10px",
-          "padding": "10%",
-          "placement": "node:out" //"node:out" or "node:center"
-        },
-        "value-box": {
-          "visible": false
-        },
-        "border-width": 1,
-        "border-color": "#cccccc",
-        "line-style": "dotted"
-      },
-      "plotarea": {
-        "margin-top": "12%"
-      },
-      "series": [{
-        "values": [tf],
-        "background-color": "#cc0000",
-        "text": "True Flood"
-      }, {
-        "values": [ff],
-        "background-color": "#ff3300",
-        "text": "False Flood"
-      }]
-    };
+			</div>
+		</div>
+			<script th:inline="javascript">
+				/*<![CDATA[*/
+				var tf = /*[[${trueflood}]]*/'default';
+				var ff = /*[[${falseflood}]]*/'default';
 
-    zingchart.render({
-      id: 'myChart',
-      data: myConfig,
-      height: 400,
-      width: "100%"
-    });
-    /*]]>*/
-  </script>
- </div>  
- <br/>
- <form action="/train">
- 
-  <input type="submit" value="Train Data" class="btn-danger btn"/>
-</form>
+				var data = [ {
+					values : [ tf, ff ],
+					labels : [ 'True Flood', 'False Flood' ],
+					type : 'pie'
+				} ];
+				var layout = {
+					title : 'Flood Status',
+					showlegend : true
+				};
 
-</div>
+				Plotly.newPlot('myDiv', data, layout, {
+					displayModeBar : false
+				});
 
-</div>
-<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
-<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<script
-    src="webjars/bootstrap-datepicker/1.0.1/js/bootstrap-datepicker.js"></script>
- </body>
- </html>   
+				/*]]>*/
+			</script>
+	
+	</div>
+	<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
+	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script
+		src="webjars/bootstrap-datepicker/1.0.1/js/bootstrap-datepicker.js"></script>
+</body>
+</html>
