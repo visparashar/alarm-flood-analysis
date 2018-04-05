@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import com.siemens.daac.poc.constant.CSVReaderConstant;
+import com.siemens.daac.poc.constant.ProjectConstants;
 
 /**
  * 
@@ -67,10 +68,11 @@ public class CSVReaderUtil {
 		String floodStatus = new String();
 		double percentageOfTrueFlood = 0.0;
 		BufferedReader br = null;
+		ZipFile zipFile =null;
 		try {
 			trueCount = new AtomicInteger(0);
 			falseCount = new AtomicInteger(0);
-			ZipFile zipFile = new ZipFile(inputFilePath);
+			zipFile= new ZipFile(inputFilePath);
 
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -96,9 +98,14 @@ public class CSVReaderUtil {
 				count = CSVReaderConstant.ZERO;
 			}
 		} finally {
-			if (br != null)
+			if (br != null) {
 				br.close();
+			}
+			if(zipFile !=null) {
+				zipFile.close();
+			}
 		}
+		CSVMergeUtil.moveFileToDestination(inputFilePath,CommonUtils.readProperty("upload-archieved-folder")+"/");
 		return floodStatusMap;
 	}
 
@@ -115,9 +122,9 @@ public class CSVReaderUtil {
 		filePath+=File.separator;
 		filePath=filePath.replaceAll("\\\\", "/");
 		final String lineSep = System.getProperty(CSVReaderConstant.LINE_SEPARATOR);
-
+		ZipFile zipFile =null;
 		try {
-			ZipFile zipFile = new ZipFile(zipFileName);
+			 zipFile = new ZipFile(zipFileName);
 
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -154,6 +161,9 @@ public class CSVReaderUtil {
 					}
 
 				}
+					if(floodStatus.equals(CSVReaderConstant.ZERO_STRING)) {
+						CSVMergeUtil.copyFileToDestination(file2.toString(), CommonUtils.readProperty("prefilter-input-folder")+"/"+ProjectConstants.FALSE_FLOOD_PATH);
+					}
 				}
 			}
 		} finally {
@@ -161,6 +171,8 @@ public class CSVReaderUtil {
 				br.close();
 			if (bw != null)
 				bw.close();
+			if(zipFile !=null)
+				zipFile.close();
 		}
 
 	}

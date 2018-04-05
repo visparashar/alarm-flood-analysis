@@ -2,11 +2,12 @@ library(dplyr)
 library(tm)
 library(NLP)
 library(textreuse)
+library(cluster)
 CalculateMSWMatrix <-  function(input_file_path ,
                                 msw_text_result_path,
                                 similarity_index_path,
                                 source_of_other_files_path   ) {
-  source(paste0(source_of_other_files_path,'/',"logger.R"))
+  # source(paste0(source_of_other_files_path,'/',"logger.R"))
   setwd(input_file_path)
   filenames <- list.files(input_file_path, pattern = '*.csv')
   len = length(filenames)
@@ -14,13 +15,13 @@ CalculateMSWMatrix <-  function(input_file_path ,
   for (i in 1:len) {
     f1 = filenames[i]
     data_set <- try(read.csv(f1, na.strings = c("", "NA")),silent = TRUE)
-    if (inherits(data_set1, "try-error"))
-    {
-      message_string = paste("Error 1: Unable to read file")
-      logEvent(message_string, "Error")
-      print (message_string)
-      return (FALSE)
-    }
+    # if (inherits(data_set1, "try-error"))
+    # {
+    #   message_string = paste("Error 1: Unable to read file")
+    #   logEvent(message_string, "Error")
+    #   print (message_string)
+    #   return (FALSE)
+    # }
     data_set = data_set %>% na.omit()
     alarm_seq = paste0(data_set$Alarm.Tag, data_set$Alarm.Id)
     # Writing csv data to text files
@@ -59,14 +60,15 @@ CalculateMSWMatrix <-  function(input_file_path ,
   #Agglomerative Hierarchical Clustering
   #need to check,which method will be perfect here
   hc1 <- agnes(scores_frame, method = "complete")
-  hc_frame=as.data.frame(hc1)
-  hc_frame
+  # hc_frame=as.data.frame(hc1)
+  # hc_frame
+  plot(hc1)
 }
 
 
-#CalculateMSWMatrix(
-#  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
-#  "C:/Users/Khushboo/Documents/msw_cluster/msw_textdataset",
-#  "C:/Users/Khushboo/Documents/msw_cluster/similarityindex_matrix",
-#  "C:/Users/Khushboo/Documents/prediction"
-#)
+CalculateMSWMatrix(
+ "C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/msw_cluster/msw_csvdataset",
+ "C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/msw_cluster/msw_textdataset",
+ "C:/Workspace_alarmflood/alarm-food-analysis/rWorkspace/msw_cluster/similarityindex_matrix",
+ ""
+)

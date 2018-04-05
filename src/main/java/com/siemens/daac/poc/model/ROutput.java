@@ -1,7 +1,13 @@
 package com.siemens.daac.poc.model;
 
-public class ROutput {
+import java.io.Serializable;
 
+public class ROutput implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int trueFloodCount;
 	private int falseFloodCount;
 	private String status;

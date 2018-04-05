@@ -19,16 +19,15 @@
       <AppenderRef ref="File" />
     </Logger>
 
-  <!--   <Logger name="org.springframework.boot" level="debug" additivity="false">
+ <!--   <Logger name="org.springframework.boot" level="debug" additivity="false">
       <AppenderRef ref="Console" />
       <AppenderRef ref="File" />
-    </Logger> -->
-
-   <!--   Log everything in Spring Core 
+    </Logger> 
+     Log everything in Spring Core 
     <Logger name="org.springframework.core" level="debug" additivity="false">
       <AppenderRef ref="Console" />
       <AppenderRef ref="File" />
-    </Logger> -->
+    </Logger>  -->
 
     <Root level="error">
       <AppenderRef ref="Console" />

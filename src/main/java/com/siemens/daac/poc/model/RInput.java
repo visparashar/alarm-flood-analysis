@@ -17,6 +17,8 @@ public class RInput implements Serializable {
 	private String algorithmType;
 	private String outputFilePath;
 	private boolean isRunForTraining;
+	private String rWorkSpacePath;
+	
 	
 	public RInput() {
 	}
@@ -60,6 +62,17 @@ public class RInput implements Serializable {
 
 	public void setRunForTraining(boolean isRunForTraining) {
 		this.isRunForTraining = isRunForTraining;
+	}
+	
+	
+	
+
+	public String getrWorkSpacePath() {
+		return rWorkSpacePath;
+	}
+
+	public void setrWorkSpacePath(String rWorkSpacePath) {
+		this.rWorkSpacePath = rWorkSpacePath;
 	}
 
 	@Override

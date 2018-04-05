@@ -21,12 +21,13 @@ public class RRequestListener {
 	@SendTo(ProjectConstants.R_RESPONSE_QUEUE)
 	public ROutput handleRCalls(final RInput rInput){
 //	syso
-		
 //		TODO: Need to call the R worker from here and nee dto check the flow as well
-//		System.out.println("recieved message "+rInput);
+		System.out.println("recieved message "+rInput);
 //		TODO: Need to create one ROutput  POJO	
 		
-		return rCodeRunner.handleRCalls(rInput);
+		ROutput rOutput = rCodeRunner.handleRCalls(rInput);
+		System.out.println("------"+rOutput);
+		return rOutput;
 		
 	}
 

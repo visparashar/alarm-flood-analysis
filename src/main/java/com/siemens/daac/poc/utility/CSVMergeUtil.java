@@ -34,13 +34,14 @@ public class CSVMergeUtil {
 			dir.mkdirs();
 		Path target = Paths.get(trainingSetLocation+"/"+ProjectConstants.TRAINING_SET_CSV_NAME);
 		Path temp =Files.write(target, mergedLines, Charset.forName("UTF-8"));
-//	move file from one location to archievelocation	
+		//	move file from one location to archievelocation	
 		if(temp!=null) {
-			String toLocation =CommonUtils.readProperty("archived-file-path");
-			
+			String toLocation =CommonUtils.readProperty("prefilter-input-folder");
+			toLocation=toLocation+="/"+ProjectConstants.TRUE_FLOOD_PATH;
+
 			if(moveFileToDestination(filePath, toLocation))
 				return true;
-			
+
 		}
 		return false;
 	}
@@ -58,10 +59,11 @@ public class CSVMergeUtil {
 		}
 		return mergedLines;
 	}
-	
-//	move the input file to archieved folder
+
+	//	move the input file to archieved folder
 	public static boolean moveFileToDestination(String fromLocation , String toLocation) throws IOException {
 		File fromLocationDir = new File(fromLocation);
+
 		if(fromLocationDir.isDirectory())
 		{
 			File toLocationDir = new File(toLocation);
@@ -72,14 +74,36 @@ public class CSVMergeUtil {
 			for (int i = 0; i < listOfFiles.length; i++) {
 				System.out.println(listOfFiles[i].getName());
 				if(listOfFiles[i].isFile()) {
-					System.out.println(toLocation+listOfFiles[i].getName());
-					Files.move(Paths.get(listOfFiles[i].toString()),Paths.get(toLocation).resolve(listOfFiles[i].getName()),StandardCopyOption.REPLACE_EXISTING);
+					System.out.println("Moving file from "+listOfFiles[i].toString()+" ---->>>> "+toLocation);
+					Files.copy(Paths.get(listOfFiles[i].toString()),Paths.get(toLocation).resolve(listOfFiles[i].getName()),StandardCopyOption.REPLACE_EXISTING);
+					Files.delete(Paths.get(listOfFiles[i].toString()));
 				}
 			}
 			return true;
+		}else if(fromLocationDir.getName().contains(".zip")) {
+			System.out.println("Moving file from "+fromLocation.toString()+" ---->>>> "+toLocation);
+			File toLocationDir = new File(toLocation);
+			if(!toLocationDir.exists())
+				toLocationDir.mkdirs();
+			Files.copy(Paths.get(fromLocation),Paths.get(toLocation).resolve(fromLocationDir.getName()),StandardCopyOption.REPLACE_EXISTING);
+			Files.delete(Paths.get(fromLocation));
 		}
 		return false;
 	}
-	
-	
+	public static boolean copyFileToDestination(String fromLocation , String toLocation) throws IOException {
+		File file = new File(fromLocation);
+		File toLocationDir = new File(toLocation);
+		if(toLocationDir.isDirectory()) {
+			if(!toLocationDir.exists()) {
+				toLocationDir.mkdirs();
+			}
+			if(file.getName().contains(".csv")) {
+				System.out.println("Copying file from "+file.getName().toString()+" >>>>>>>>>>"+toLocation);
+				Files.copy(Paths.get(file.toString()), Paths.get(toLocation).resolve(file.getName().toString()), StandardCopyOption.REPLACE_EXISTING);
+			}
+		}
+		return true;
+	}
+
+
 }
