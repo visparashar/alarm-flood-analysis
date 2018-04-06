@@ -9,6 +9,8 @@ PrefilterFunc <-
     #assuming a thresold value
 	#changed the thresold value using property file - vishal
     thresold = 0.6
+	#defining a dataframe for prefilter similarity
+    df_total = data.frame()
     library(magrittr)
     setwd(input_file_path)
     
@@ -48,24 +50,23 @@ PrefilterFunc <-
           nrow_f2 = nrow(data_set2)
           max_nrow = max(nrow_f1, nrow_f2)
           #Check for id column name
-          alarm_seq1 = paste0(data_set1$Alarm.Tag, data_set1$Alarm.Id)
-          alarm_seq2 = paste0(data_set2$Alarm.Tag, data_set2$Alarm.Id)
+          alarm_seq1 = paste0(data_set1[,5], data_set1[,6])
+          alarm_seq2 = paste0(data_set2[,5], data_set2[,6])
           common_seq = intersect(alarm_seq1, alarm_seq2)
           len1 = length(common_seq)
           si = len1 / max_nrow
           if (si >= thresold)
           {
             #saving a file to a particular directory
-            setwd(prefilter_result_path)
+            setwd(similarity_index_path)
+            a = paste0("Flood", i)
+            b = paste0("Flood", j)
+            score = si
+            sm = data.frame(a, b, score)
+            df_total <- rbind(df_total, sm)
             write.csv(
-              data_set1,
-              file = paste0(f1),
-              row.names = FALSE,
-              quote = FALSE
-            )
-            write.csv(
-              data_set2,
-              file = paste0(f2),
+              df_total,
+              file = paste0("result", ".csv"),
               row.names = FALSE,
               quote = FALSE
             )
@@ -96,7 +97,7 @@ PrefilterFunc <-
 
 #PrefilterFunc(
 #  "C:/Users/Khushboo/Documents/prefilter/alarm_dataset",
-#  "C:/Users/Khushboo/Documents/prefilter/prefilter_results",
+#  "C:/Users/Khushboo/Documents/msw_cluster/similarity_index_matrix",
 #  "C:/Users/Khushboo/Documents/msw_cluster/msw_csvdataset",
 #  "C:/Users/Khushboo/Documents/prediction"
 #)
