@@ -30,7 +30,7 @@ import com.siemens.daac.poc.utility.CommonUtils;
 @Controller
 public class UploadController {
 	File file = new File("Check_For_R_Call_Get_Completed.txt");
-	private boolean status=false;
+	private boolean status = false;
 
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
@@ -55,76 +55,76 @@ public class UploadController {
 	@Autowired
 	StorageService storageService;
 
-	String defaultWorkspace=System.getProperty("user.dir");
+	String defaultWorkspace = System.getProperty("user.dir");
 	private final Path rootLocation = Paths.get("data/input_data");
-	//Save the uploaded file to this folder
+
+	// Save the uploaded file to this folder
 	@PostMapping("/upload") // //new annotation since 4.3
-	public String singleFileUpload(@RequestParam("file") MultipartFile file,
-			RedirectAttributes redirectAttributes) {
+	public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
 		try {
-			String UploadedFolderLocation =defaultWorkspace+userInputFileLocation+File.separator;
-			//			UploadedFolderLocation=UploadedFolderLocation.replaceAll("\\\\", "/");
+			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
+			// UploadedFolderLocation=UploadedFolderLocation.replaceAll("\\\\", "/");
 			// Get the file and save it somewhere
-			//			byte[] bytes = file.getBytes();
+			// byte[] bytes = file.getBytes();
 
-			//			File directory = new File(UploadedFolderLocation);
-			//			if (!directory.exists()) {
-			//				if(!directory.mkdirs()){
-			//					logger.error("[singleFileUpload] There is a problem occurred while creating the upload directory ");
-			//					redirectAttributes.addFlashAttribute("message",
-			//							"There is some problem occured please check logs ");
-			//					return "redirect:/uploadStatus";
-			//				}
-			//			}
-			//			directory.
+			// File directory = new File(UploadedFolderLocation);
+			// if (!directory.exists()) {
+			// if(!directory.mkdirs()){
+			// logger.error("[singleFileUpload] There is a problem occurred while creating
+			// the upload directory ");
+			// redirectAttributes.addFlashAttribute("message",
+			// "There is some problem occured please check logs ");
+			// return "redirect:/uploadStatus";
+			// }
+			// }
+			// directory.
 			storageService.store(file);
-			//			Path path = Paths.get(UploadedFolderLocation);
-			//			Files.copy(file.getInputStream(), directory.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			//			Files.write(path, bytes);
+			// Path path = Paths.get(UploadedFolderLocation);
+			// Files.copy(file.getInputStream(), directory.toPath(),
+			// StandardCopyOption.REPLACE_EXISTING);
+			// Files.write(path, bytes);
 
 			// Calling CSVReading Service TO read and extract the data ;
-			if(csvFileProcessorService.read(UploadedFolderLocation +file.getOriginalFilename()))
-			{
-				//				CSVMergeUtil.moveFileToDestination(UploadedFolderLocation, archievedFileLocation);
-				String trainingSetInitialFilePath =mergedFilePath;
+			if (csvFileProcessorService.read(UploadedFolderLocation + file.getOriginalFilename())) {
+				// CSVMergeUtil.moveFileToDestination(UploadedFolderLocation,
+				// archievedFileLocation);
+				String trainingSetInitialFilePath = mergedFilePath;
 				csvFileProcessorService.merge(trainingSetInitialFilePath);
-				//				setup r prequesities for R to be run
+				// setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
-				callRProcess(defaultWorkspace+"/"+trainingSetInitialFilePath);
-			}else{
+				callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath);
+			} else {
 				logger.error("Please Upload Valid Zip");
-				redirectAttributes.addFlashAttribute("message",
-						"Please Upload Valid Zip ");
+				redirectAttributes.addFlashAttribute("message", "Please Upload Valid Zip ");
 				return "redirect:/uploadStatus";
 			}
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded '" + file.getOriginalFilename() + "'");
 		} catch (IOException e) {
-			logger.error("Some Problem Occurred "+e.getMessage());
-			redirectAttributes.addFlashAttribute("message",
-					"There is some problem occured please check logs ");
+			logger.error("Some Problem Occurred " + e.getMessage());
+			redirectAttributes.addFlashAttribute("message", "There is some problem occured please check logs ");
 			return "redirect:/uploadStatus";
 		}
-		status=true;
+		status = true;
 		return "redirect:/uploadStatus";
 	}
 
 	private void callRProcess(String trainingSetPath) {
 		RInput rInput = new RInput();
 
-		trainingSetPath +="/"+ProjectConstants.TRAINING_SET_DIR_NAME;
-		trainingSetPath=trainingSetPath.replaceAll("\\\\", "/");
+		trainingSetPath += "/" + ProjectConstants.TRAINING_SET_DIR_NAME;
+		trainingSetPath = trainingSetPath.replaceAll("\\\\", "/");
 		rInput.setInputFilePath(trainingSetPath);
-		rInput.setOutputFilePath(rOutputFolderLocation+"/");
+		rInput.setOutputFilePath(rOutputFolderLocation + "/");
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
 		rInput.setRunForTraining(true);
-		String workSpace =CommonUtils.getRWorkspacePath();
-		workSpace =workSpace.replaceAll("\\\\", "/");
+		String workSpace = CommonUtils.getRWorkspacePath();
+		workSpace = workSpace.replaceAll("\\\\", "/");
 		rInput.setrWorkSpacePath(workSpace);
 		rManager.sendToQueueForRExecution(rInput);
 		rInput.setRunForTraining(false);
@@ -133,42 +133,39 @@ public class UploadController {
 
 	private void setUpPreRequesiteisForR() {
 
-		File file1 = new File(rOutputFolderLocation+"/"+ProjectConstants.TRUE_FLOOD_PATH);
-		if(!file1.exists())
+		File file1 = new File(rOutputFolderLocation + "/" + ProjectConstants.TRUE_FLOOD_PATH);
+		if (!file1.exists())
 			file1.mkdirs();
 
-		File file2 = new File(rOutputFolderLocation+"/"+ProjectConstants.FALSE_FLOOD_PATH);
-		if(!file2.exists())
+		File file2 = new File(rOutputFolderLocation + "/" + ProjectConstants.FALSE_FLOOD_PATH);
+		if (!file2.exists())
 			file2.mkdirs();
 
 	}
 
-
 	@GetMapping("/uploadStatus")
 	public String uploadStatus(ModelMap m) {
-		//		Integer trueflood=50;
-		//		Integer falseflood=10;
-		if(status) {
-		while(!file.exists()) {
-			logger.info("waiting for r call get completed in uploadStatus method");
+		// Integer trueflood=50;
+		// Integer falseflood=10;
+		if (status) {
+			while (!file.exists()) {
+				logger.info("waiting for r call get completed in uploadStatus method");
+			}
+		} else {
+			return "/flood";
 		}
-		}else
-		{
-			return "/flood";	
-		}
-			m.addAttribute("trueflood",CSVReaderUtil.trueCount);
-			m.addAttribute("falseflood",CSVReaderUtil.falseCount);
+		file.delete();
+		m.addAttribute("trueflood", CSVReaderUtil.trueCount);
+		m.addAttribute("falseflood", CSVReaderUtil.falseCount);
 		return "AlarmHomePage";
-		
+
 	}
-	
+
 	@GetMapping("/training")
-	public String trainModel(ModelMap m ) {
-		
-		
-		
+	public String trainModel(ModelMap m) {
+
 		return "AlarmHomePage";
-		
+
 	}
 
 }
