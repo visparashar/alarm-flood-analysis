@@ -3,15 +3,13 @@
 PrefilterFunc <-
   function(input_file_path ,
            prefilter_result_path,
-           msw_result_path,source_of_other_files_path) {
-    source(paste0(source_of_other_files_path,'/',"logger.R"))
+           msw_result_path) {
+    # source(paste0(source_of_other_files_path,'/',"logger.R"))
 	
     #assuming a thresold value
 	#changed the thresold value using property file - vishal
     thresold = 0.6
-	#defining a dataframe for prefilter similarity
-    df_total = data.frame()
-    #set the working directory
+    library(magrittr)
     setwd(input_file_path)
     
     #List csv files of the directory
@@ -57,16 +55,17 @@ PrefilterFunc <-
           si = len1 / max_nrow
           if (si >= thresold)
           {
-            #writing prefilter similarity to a file
+            #saving a file to a particular directory
             setwd(prefilter_result_path)
-            a = paste0("Flood", i)
-            b = paste0("Flood", j)
-            score = si
-            sm = data.frame(a, b, score)
-            df_total <- rbind(df_total, sm)
             write.csv(
-              df_total,
-              file = paste0("prefilter_matrix", ".csv"),
+              data_set1,
+              file = paste0(f1),
+              row.names = FALSE,
+              quote = FALSE
+            )
+            write.csv(
+              data_set2,
+              file = paste0(f2),
               row.names = FALSE,
               quote = FALSE
             )

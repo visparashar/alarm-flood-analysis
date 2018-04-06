@@ -24,7 +24,7 @@ read_file_func <- function(inputfiledirname ,datatype){
   }else{
     trim_values = ''
       # c(CONST_ALARMTAG_INDEX ,CONST_ALARMID_INDEX)
-    return(data_set)
+    return(data_set[-CONST_STATUS_INDEX])
   }
   data_set = data_set[trim_values]
   return(data_set)
@@ -97,11 +97,11 @@ CustomNaiveBayesFunc<-function(input_file_path ,source_of_other_files_path,outpu
       
       
       if(count/nrow(test_set)>=.5){
-        test_set =cbind(test_set ,Status=1)
+        test_set =cbind(test_set ,Flood_Status=1)
         updated_output_file=paste0(output_file_path,'true_flood/',file,'.csv')
         true_count=true_count+1
       }else{
-        test_set =cbind(test_set ,Status=0)
+        test_set =cbind(test_set ,Flood_Status=0)
         updated_output_file=paste0(output_file_path,'false_flood/',file,'.csv')
         false_count=false_count+1
       }

@@ -89,8 +89,10 @@ public class RCodeRunner {
 				rOutput.setErrorMsg("The Algotype defined is invalid");
 				return rOutput;
 			}
+//			if(rInput.getAlgorithmType().equals(ProjectConstants.CONST_PREFILTER_ALGO) && rInput.getAlgorithmType() &&) 
 			String name ="callRFunction('"+rInput.getInputFilePath()+"','"+rInput.getOutputFilePath()+"','"+rInput.getrWorkSpacePath()+algoPath
-					+ "','"+rInput.getAlgorithmType()+"','"+rInput.isRunForTraining()+"','"+rInput.getrWorkSpacePath()+"')";
+					+ "','"+rInput.getAlgorithmType()+"','"+rInput.isRunForTraining()+"','"+rInput.getrWorkSpacePath()+"','"+rInput.getSecondInputFilePath()+"')";
+			
 			if(logger.isDebugEnabled())
 				logger.debug("The Calling function is for Algo is "+name);
 			REXP rFuncCallResponse = connector.parseAndEval(
