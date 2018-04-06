@@ -29,7 +29,8 @@ import com.siemens.daac.poc.utility.CommonUtils;
 
 @Controller
 public class UploadController {
-
+	File file = new File("Check_For_R_Call_Get_Completed.txt");
+	private boolean status=false;
 
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
@@ -109,6 +110,7 @@ public class UploadController {
 					"There is some problem occured please check logs ");
 			return "redirect:/uploadStatus";
 		}
+		status=true;
 		return "redirect:/uploadStatus";
 	}
 
@@ -146,7 +148,14 @@ public class UploadController {
 	public String uploadStatus(ModelMap m) {
 		//		Integer trueflood=50;
 		//		Integer falseflood=10;
-
+		if(status) {
+		while(!file.exists()) {
+			logger.info("waiting for r call get completed in uploadStatus method");
+		}
+		}else
+		{
+			return "/flood";	
+		}
 			m.addAttribute("trueflood",CSVReaderUtil.trueCount);
 			m.addAttribute("falseflood",CSVReaderUtil.falseCount);
 		return "AlarmHomePage";
