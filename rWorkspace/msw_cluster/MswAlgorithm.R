@@ -40,7 +40,7 @@ CalculateMSWMatrix <-  function(input_file_path ,
   #similarity matrix calculation
   dir <- Corpus(DirSource(msw_text_result_path))
   corpus <-
-    TextReuseCorpus(dir = msw_text_result_path, minhash_func = minhash)
+    TextReuseCorpus(dir = msw_text_result_path)
   #pairwise comparison method
   scores <- pairwise_compare(corpus,jaccard_similarity)
   scores_pair=pairwise_candidates(scores)
