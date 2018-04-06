@@ -9,6 +9,9 @@ PrefilterFunc <-
     #assuming a thresold value
 	#changed the thresold value using property file - vishal
     thresold = 0.6
+	#defining a dataframe for prefilter similarity
+    df_total = data.frame()
+    #set the working directory
     setwd(input_file_path)
     
     #List csv files of the directory
@@ -54,17 +57,16 @@ PrefilterFunc <-
           si = len1 / max_nrow
           if (si >= thresold)
           {
-            #saving a file to a particular directory
+            #writing prefilter similarity to a file
             setwd(prefilter_result_path)
+            a = paste0("Flood", i)
+            b = paste0("Flood", j)
+            score = si
+            sm = data.frame(a, b, score)
+            df_total <- rbind(df_total, sm)
             write.csv(
-              data_set1,
-              file = paste0(f1),
-              row.names = FALSE,
-              quote = FALSE
-            )
-            write.csv(
-              data_set2,
-              file = paste0(f2),
+              df_total,
+              file = paste0("prefilter_matrix", ".csv"),
               row.names = FALSE,
               quote = FALSE
             )
