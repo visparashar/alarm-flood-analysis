@@ -77,6 +77,7 @@ public class RCodeRunner {
 			if(logger.isDebugEnabled())
 				logger.info("Calling the Source function of R ");
 			String sourceRStatement ="source('"+generalRCodeRunner+"')";
+			
 			//					calling the source using try eval
 			REXP rResponseObject = connector.parseAndEval(
 					"try(eval("+sourceRStatement+"),silent=TRUE)");
@@ -89,6 +90,7 @@ public class RCodeRunner {
 				rOutput.setErrorMsg("The Algotype defined is invalid");
 				return rOutput;
 			}
+			rOutput.setAlgoType(rInput.getAlgorithmType());
 //			if(rInput.getAlgorithmType().equals(ProjectConstants.CONST_PREFILTER_ALGO) && rInput.getAlgorithmType() &&) 
 			String name ="callRFunction('"+rInput.getInputFilePath()+"','"+rInput.getOutputFilePath()+"','"+rInput.getrWorkSpacePath()+algoPath
 					+ "','"+rInput.getAlgorithmType()+"','"+rInput.isRunForTraining()+"','"+rInput.getrWorkSpacePath()+"','"+rInput.getSecondInputFilePath()+"')";
@@ -112,6 +114,7 @@ public class RCodeRunner {
 				rOutput.setStatus(ProjectConstants.TRUE);
 				return rOutput;
 			}
+			rOutput.setStatus(ProjectConstants.TRUE);
 			
 		}catch(REXPMismatchException ex) {
 			logger.error("REXPMismatchException :::"+ex.getMessage());
