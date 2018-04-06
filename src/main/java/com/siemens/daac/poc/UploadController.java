@@ -152,9 +152,10 @@ public class UploadController {
 				logger.info("waiting for r call get completed in uploadStatus method");
 			}
 		} else {
-			return "/flood";
+			return "AlarmHomePage";
 		}
 		file.delete();
+		status=false;
 		m.addAttribute("trueflood", CSVReaderUtil.trueCount);
 		m.addAttribute("falseflood", CSVReaderUtil.falseCount);
 		return "AlarmHomePage";
