@@ -18,6 +18,7 @@ public class RInput implements Serializable {
 	private String outputFilePath;
 	private boolean isRunForTraining;
 	private String rWorkSpacePath;
+	private String secondInputFilePath;
 	
 	
 	public RInput() {
@@ -75,11 +76,24 @@ public class RInput implements Serializable {
 		this.rWorkSpacePath = rWorkSpacePath;
 	}
 
+	
+	
+	
+	public String getSecondInputFilePath() {
+		return secondInputFilePath;
+	}
+
+	public void setSecondInputFilePath(String secondInputFilePath) {
+		this.secondInputFilePath = secondInputFilePath;
+	}
+
 	@Override
 	public String toString() {
 		return "RInput [transactionId=" + transactionId + ", inputFilePath=" + inputFilePath + ", algorithmType="
-				+ algorithmType + ", outputFilePath=" + outputFilePath +"]";
+				+ algorithmType + ", outputFilePath=" + outputFilePath + ", isRunForTraining=" + isRunForTraining
+				+ ", rWorkSpacePath=" + rWorkSpacePath + ", secondInputFilePath=" + secondInputFilePath + "]";
 	}
+
 	
 	
 	

@@ -1,7 +1,7 @@
 
 callRFunction <- function(
 		input_file_path ,output_file_path,source_of_other_lib,algorithm_to_run,
-  		is_model_need_to_run_or_training_set,rworkspace_path){
+  		is_model_need_to_run_or_training_set,rworkspace_path , second_input_for_prefilter){
 	getwd()
   setwd(rworkspace_path)
   source('filename_constants.R')
@@ -33,8 +33,8 @@ callRFunction <- function(
 	}
 	if(algorithm_to_run == CONST_PREFILTER_ALGO && is_model_need_to_run_or_training_set == 'true')
 	{
-		source(paste0(source_of_other_lib,,'/',CONST_PREFILTER_FILENAME))
-	  prefilter_response = PrefilterFunc(input_file_path,source_of_other_lib,output_file_path)
+		source(paste0(source_of_other_lib,'/',CONST_PREFILTER_FILENAME))
+	  prefilter_response = PrefilterFunc(input_file_path,output_file_path,second_input_for_prefilter)
 	  return(prefilter_response)
 		
 	}else if (algorithm_to_run == CONST_PREFILTER_ALGO && is_model_need_to_run_or_training_set == 'false'){
@@ -46,7 +46,7 @@ callRFunction <- function(
 	if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'true')
 	{
 		source(paste0(source_of_other_lib,'/',CONST_MSW_CLUSTER_FILENAME))
-		clasturing_response = CalculateMSWMatrix(input_file_path,source_of_other_lib,output_file_path)
+		clasturing_response = CalculateMSWMatrix(input_file_path,second_input_for_prefilter,output_file_path)
 		return(clasturing_response)
 	}else if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'false'){
 		source(paste0(source_of_other_lib,'/',CONST_MSW_CLUSTER_FILENAME))
