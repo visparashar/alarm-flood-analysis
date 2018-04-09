@@ -145,7 +145,11 @@ public class CSVReaderUtil {
 					
 					String[] arr =fileName.split("/");
 					if((arr.length==1 && arr[0].contains(".csv")) || (arr.length>1 && arr[arr.length-1].contains(".csv") )){
-					file2 = new File(filePath + arr[arr.length-1]);
+					if(floodStatus.equals(CSVReaderConstant.ZERO_STRING)) {
+						file2= new File(filePath + "False_FF_Remaned_"+arr[arr.length-1]);
+					}else {
+						file2= new File(filePath + arr[arr.length-1]);
+					}
 					br = new BufferedReader(new InputStreamReader(inputFS));
 					bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file2)));
 					String line = null;
@@ -159,11 +163,15 @@ public class CSVReaderUtil {
 							bw.write(line + addedColumn + lineSep);
 						}
 					}
-
-				}
 					if(floodStatus.equals(CSVReaderConstant.ZERO_STRING)) {
+						File f = new File(CommonUtils.readProperty("prefilter-input-folder")+"/"+ProjectConstants.FALSE_FLOOD_PATH);
+						if(!f.exists())
+							f.mkdirs();
 						CSVMergeUtil.copyFileToDestination(file2.toString(), CommonUtils.readProperty("prefilter-input-folder")+"/"+ProjectConstants.FALSE_FLOOD_PATH);
 					}
+
+				}
+					
 				}
 			}
 		} finally {

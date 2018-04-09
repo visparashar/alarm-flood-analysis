@@ -6,6 +6,11 @@
 	rel="stylesheet" />
 <!-- Plotly.js -->
 <script src="js/plotly-latest.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	
 <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
 <!-- Numeric JS -->
 </head>
@@ -46,16 +51,15 @@
 
 		return true;
 	}
-
-	function showMatrix() {
-
+	function runRAndShowMatrix() {
 		document.getElementById('matrix').style.display = 'block';
 
 	}
 
 	function onTrain() {
-		document.getElementById('train').style.display = 'block';
+	document.getElementById('train').style.display = 'block';
 	}
+	
 	/*]]>*/
 </script>
 
@@ -116,9 +120,9 @@
 						<B>Click Here To Train Data</B>
 					</div>
 					<div class="col-md-4">
-						<form method="GET" action="/training">
-							<input type="submit" value="Train Data"
-								class="btn btn-success btn-sm" onClick="showMatrix()" />
+						<form id="train-form">
+							<input type="submit" value="Train Data" id ="train-btn"
+								class="btn btn-success btn-sm" onClick="runRAndShowMatrix()" />
 						</form>
 					</div>
 				</div>
@@ -180,7 +184,6 @@
 							</ul>
 							<div class="tab-content">
 								<div id="sim" class="tab-pane fade in active">
-									<p>Similarity Matrix</p>
 								</div>
 								<div id="cluster" class="tab-pane fade">
 									<p>Cluster Matrix</p>
@@ -214,14 +217,7 @@
 			</div>
 		</div>
 
-
-
-
-
 	</div>
-	<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
-	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script
-		src="webjars/bootstrap-datepicker/1.0.1/js/bootstrap-datepicker.js"></script>
+	
 </body>
 </html>

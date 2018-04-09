@@ -69,9 +69,15 @@ CalculateMSWMatrix <-  function(input_file_path ,
         quote = FALSE
       )
     }
-  }
+  
+  max_range = max(scores_frame,na.rm = TRUE)
+  print(max_range)
+        
+  
   return(scores_frame)
-}
+  }
+ 
+
 
 
 #CalculateMSWMatrix(

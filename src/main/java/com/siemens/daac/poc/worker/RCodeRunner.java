@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.model.RInput;
 import com.siemens.daac.poc.model.ROutput;
-import com.siemens.daac.poc.utility.CommonUtils;
 import com.siemens.daac.poc.utility.RConnector;
 
 
@@ -77,7 +76,7 @@ public class RCodeRunner {
 			if(logger.isDebugEnabled())
 				logger.info("Calling the Source function of R ");
 			String sourceRStatement ="source('"+generalRCodeRunner+"')";
-			
+
 			//					calling the source using try eval
 			REXP rResponseObject = connector.parseAndEval(
 					"try(eval("+sourceRStatement+"),silent=TRUE)");
@@ -91,10 +90,10 @@ public class RCodeRunner {
 				return rOutput;
 			}
 			rOutput.setAlgoType(rInput.getAlgorithmType());
-//			if(rInput.getAlgorithmType().equals(ProjectConstants.CONST_PREFILTER_ALGO) && rInput.getAlgorithmType() &&) 
+			//			if(rInput.getAlgorithmType().equals(ProjectConstants.CONST_PREFILTER_ALGO) && rInput.getAlgorithmType() &&) 
 			String name ="callRFunction('"+rInput.getInputFilePath()+"','"+rInput.getOutputFilePath()+"','"+rInput.getrWorkSpacePath()+algoPath
 					+ "','"+rInput.getAlgorithmType()+"','"+rInput.isRunForTraining()+"','"+rInput.getrWorkSpacePath()+"','"+rInput.getSecondInputFilePath()+"')";
-			
+
 			if(logger.isDebugEnabled())
 				logger.debug("The Calling function is for Algo is "+name);
 			REXP rFuncCallResponse = connector.parseAndEval(
@@ -104,7 +103,7 @@ public class RCodeRunner {
 				rOutput.setErrorMsg(rResponseObject.asString());
 				rOutput.setStatus(ProjectConstants.FALSE);
 			}
-			if(rInput.getAlgorithmType().equalsIgnoreCase(ProjectConstants.R_PREDICTION_ALGO)&& !rInput.isRunForTraining())
+			if(rInput.getAlgorithmType().equalsIgnoreCase(ProjectConstants.R_PREDICTION_ALGO) && !rInput.isRunForTraining())
 			{
 				int[] rResponseArr =rFuncCallResponse.asIntegers();
 				if(rResponseArr.length>0) {
@@ -114,8 +113,13 @@ public class RCodeRunner {
 				rOutput.setStatus(ProjectConstants.TRUE);
 				return rOutput;
 			}
-			rOutput.setStatus(ProjectConstants.TRUE);
-			
+			if(rInput.getAlgorithmType().equalsIgnoreCase(ProjectConstants.R_PREDICTION_ALGO) && rInput.isRunForTraining()) {
+				rOutput.setStatus(ProjectConstants.FALSE);
+			}else {
+				rOutput.setStatus(ProjectConstants.TRUE);
+			}
+
+
 		}catch(REXPMismatchException ex) {
 			logger.error("REXPMismatchException :::"+ex.getMessage());
 			rOutput.setStatus(ProjectConstants.FALSE);

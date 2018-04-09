@@ -13,6 +13,7 @@ public class ROutput implements Serializable {
 	private String status;
 	private String errorMsg;
 	private String transactionId;
+	private String algoType;
 	public int getTrueFloodCount() {
 		return trueFloodCount;
 	}
@@ -42,6 +43,13 @@ public class ROutput implements Serializable {
 	}
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+	
+	public String getAlgoType() {
+		return algoType;
+	}
+	public void setAlgoType(String algoType) {
+		this.algoType = algoType;
 	}
 	@Override
 	public String toString() {

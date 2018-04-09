@@ -59,7 +59,8 @@ public class UploadController {
 	// Save the uploaded file to this folder
 	@PostMapping("/upload") 
 	public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-
+		
+		
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
@@ -143,7 +144,7 @@ public class UploadController {
 
 	@GetMapping("/training")
 	public String trainModel(ModelMap m ) {
-
+System.out.println("/training called");
 		try {
 			callSequenceExecutor(true);
 		}catch(Exception e ) {

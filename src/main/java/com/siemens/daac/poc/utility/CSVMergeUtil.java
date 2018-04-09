@@ -74,9 +74,13 @@ public class CSVMergeUtil {
 			for (int i = 0; i < listOfFiles.length; i++) {
 				System.out.println(listOfFiles[i].getName());
 				if(listOfFiles[i].isFile()) {
-					System.out.println("Moving file from "+listOfFiles[i].toString()+" ---->>>> "+toLocation);
-					Files.copy(Paths.get(listOfFiles[i].toString()),Paths.get(toLocation).resolve(listOfFiles[i].getName()),StandardCopyOption.REPLACE_EXISTING);
-					Files.delete(Paths.get(listOfFiles[i].toString()));
+					if(listOfFiles[i].getName().startsWith("False_FF_Remaned_")) {
+						Files.delete(Paths.get(listOfFiles[i].toString()));
+					}else {
+						System.out.println("Moving file from "+listOfFiles[i].toString()+" ---->>>> "+toLocation);
+						Files.copy(Paths.get(listOfFiles[i].toString()),Paths.get(toLocation).resolve(listOfFiles[i].getName()),StandardCopyOption.REPLACE_EXISTING);
+						Files.delete(Paths.get(listOfFiles[i].toString()));
+					}
 				}
 			}
 			return true;

@@ -11,10 +11,10 @@ public class RUtil {
 	
 	public static boolean doPrefilterPrerequistes() {
 //		create required folder of prefilter
-		File outPutFilePrefilter = new File(CommonUtils.readProperty("r-prefilter-output-folder-location"));
 		File inputFileForMWClusterDir = new File(CommonUtils.readProperty("r-prefilter-output-for-mwcluster-location"));
-		if(!outPutFilePrefilter.exists())
-			outPutFilePrefilter.mkdirs();
+		File similarityMatrxiPath = new File(CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location"));
+		if(!similarityMatrxiPath.exists())
+			 similarityMatrxiPath.mkdirs();
 		if(!inputFileForMWClusterDir.exists())
 			return inputFileForMWClusterDir.mkdirs();
 		return true;
@@ -49,7 +49,7 @@ public class RUtil {
 				inputFilePath =defaultWorkspace+"/"+inputFilePath+"/"+ProjectConstants.TRUE_FLOOD_PATH;
 				inputFilePath= inputFilePath.replaceAll("\\\\", "/");
 				rinput.setInputFilePath(inputFilePath);
-				String outputFilePath = CommonUtils.readProperty("r-prefilter-output-folder-location");
+				String outputFilePath = CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location");
 				outputFilePath=defaultWorkspace+"/"+outputFilePath;
 				outputFilePath = outputFilePath.replaceAll("\\\\", "/");
 				rinput.setOutputFilePath(outputFilePath);
