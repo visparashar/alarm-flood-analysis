@@ -1,6 +1,9 @@
 package com.siemens.daac.poc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +17,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -58,24 +62,23 @@ public class UploadController {
 	private final Path rootLocation = Paths.get("data/input_data");
 
 	// Save the uploaded file to this folder
-	@PostMapping("/upload") 
+	@PostMapping("/upload")
 	public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-		
-		
+
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
 		try {
 			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
-			String fileName =null;
+			String fileName = null;
 			String pattern = Pattern.quote(System.getProperty("file.separator"));
-			String[] str =file.getOriginalFilename().split(pattern);
-			if(str.length>0)
-				fileName =str[str.length-1];
+			String[] str = file.getOriginalFilename().split(pattern);
+			if (str.length > 0)
+				fileName = str[str.length - 1];
 			else
-				fileName=str[0];
-			storageService.store(file,fileName);
+				fileName = str[0];
+			storageService.store(file, fileName);
 
 			// Calling CSVReading Service TO read and extract the data ;
 			if (csvFileProcessorService.read(UploadedFolderLocation + fileName)) {
@@ -91,8 +94,7 @@ public class UploadController {
 				redirectAttributes.addFlashAttribute("message", "Please Upload Valid Zip ");
 				return "redirect:/uploadStatus";
 			}
-			redirectAttributes.addFlashAttribute("message",
-					"You successfully uploaded '" + fileName + "'");
+			redirectAttributes.addFlashAttribute("message", "You successfully uploaded '" + fileName + "'");
 		} catch (IOException e) {
 			logger.error("Some Problem Occurred " + e.getMessage());
 			redirectAttributes.addFlashAttribute("message", "There is some problem occured please check logs ");
@@ -137,13 +139,13 @@ public class UploadController {
 		// Integer falseflood=10;
 		if (status) {
 			while (!file.exists()) {
-//				logger.info("waiting for r call get completed in uploadStatus method");
+				// logger.info("waiting for r call get completed in uploadStatus method");
 			}
 		} else {
 			return "AlarmHomePage";
 		}
 		file.delete();
-		status=false;
+		status = false;
 		m.addAttribute("trueflood", CSVReaderUtil.trueCount);
 		m.addAttribute("falseflood", CSVReaderUtil.falseCount);
 		return "AlarmHomePage";
@@ -151,11 +153,11 @@ public class UploadController {
 	}
 
 	@GetMapping("/training")
-	public String trainModel(ModelMap m ) {
-System.out.println("/training called");
+	public String trainModel(ModelMap m) {
+		System.out.println("/training called");
 		try {
 			callSequenceExecutor(true);
-		}catch(Exception e ) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -164,18 +166,17 @@ System.out.println("/training called");
 	}
 
 	private void callSequenceExecutor(boolean isTrainingRun) {
-		//		call prefilter
-		if(RUtil.doPrefilterPrerequistes()) {
-			//		prepare rInput
-			RInput rinput =null;
+		// call prefilter
+		if (RUtil.doPrefilterPrerequistes()) {
+			// prepare rInput
+			RInput rinput = null;
 			try {
-				rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_PREFILTER_ALGO,isTrainingRun);
-				if(rinput!=null) {
-					if(rManager.sendToQueueForRExecution(rinput))
-					{
-						//						call for mswCluster
-						rinput =null;
-						if(RUtil.doMSWClusterPrerequistes()) {
+				rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_PREFILTER_ALGO, isTrainingRun);
+				if (rinput != null) {
+					if (rManager.sendToQueueForRExecution(rinput)) {
+						// call for mswCluster
+						rinput = null;
+						if (RUtil.doMSWClusterPrerequistes()) {
 							rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_MSW_CLUSTER_ALSO, isTrainingRun);
 							rManager.sendToQueueForRExecution(rinput);
 						}
@@ -188,6 +189,51 @@ System.out.println("/training called");
 			}
 
 		}
+
+	}
+
+	@GetMapping("/getCsv")
+	public @ResponseBody String getCSVFile() {
+		int cnt = 0;
+		String csvFile = "result.csv";
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+		String retStrt="";
+		String separator="#~#";
+
+		try {
+
+			br = new BufferedReader(new FileReader(csvFile));
+			while ((line = br.readLine()) != null) {
+				if (cnt != 0) {
+					// use comma as separator
+					String[] country = line.split(cvsSplitBy);
+					retStrt=retStrt+country[0]+separator+country[1]+separator+country[2]+cvsSplitBy;
+					
+				}
+				cnt++;
+
+			}
+			cnt=0;
+
+		} catch (FileNotFoundException e) {
+			logger.error("FileNotFoundException in method getCSVFile :"+e);
+		} catch (IOException e) {
+			logger.error("IOException in method getCSVFile :"+e);
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error("error while closing bufferReader in method getCSVFile" +e);
+				}
+			}
+		}
+		if(retStrt.contains(cvsSplitBy))
+		retStrt=retStrt.substring(0, retStrt.length()-1);
+
+		return retStrt;
 
 	}
 
