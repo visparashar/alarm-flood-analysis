@@ -19,7 +19,6 @@ function fire_ajax_submit() {
 		cache : false,
 		// timeout: 600000,
 		success : function(data) {
-
 			getDataAndPlot();
 			console.log("SUCCESS : ", data);
 
@@ -59,8 +58,10 @@ function processData(allRows) {
 	var ss = allRows.split(",");
 	var x1 = [];
 	var y1 = [];
-	//var z1 = [][];
+	var z1 = [];
 	var i;
+	var j;
+	var k;
 	for (i = 0; i < ss.length; i++) {
 		var eachRow = ss[i].split("#~#");
 		if(x1.indexOf(eachRow[0])==-1)
@@ -68,10 +69,16 @@ function processData(allRows) {
 		if(y1.indexOf(eachRow[1])==-1)
 		y1.push(eachRow[1]);
 	}
-	
-	// var x1=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-	// var y1=['Morning', 'Afternoon'];
-	var z1 = [ [ 1, 20, 30, 50, 1 ], [ 20, 1, 60, 80, 30 ] ,[ 20, 1, 60, 80, 30 ]];
+	for (k = 0; k < ss.length; k++) {
+		var tempArr =[];
+		for (j = 0; j < ss.length; j++) {
+			var dupRow = ss[k].split("#~#");
+			tempArr[j]=dupRow[2];
+		}
+		alert(tempArr);
+		z1[k]=tempArr;
+	}
+	alert(z1);
 	var data = [ {
 		z : z1,
 		x : x1,
