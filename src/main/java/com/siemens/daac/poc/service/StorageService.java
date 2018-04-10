@@ -1,11 +1,13 @@
 package com.siemens.daac.poc.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.regex.Pattern;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -18,12 +20,13 @@ public class StorageService {
 	
 	private final Path rootLocation = Paths.get("data/input_data");
  
-	public void store(MultipartFile file){
+	public void store(MultipartFile file,String fileName){
 		try {
-           Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()),StandardCopyOption.REPLACE_EXISTING);
+			
+           Files.copy(file.getInputStream(), this.rootLocation.resolve(fileName),StandardCopyOption.REPLACE_EXISTING);
           
         } catch (Exception e) {
-        	throw new RuntimeException("FAIL!");
+        	throw new RuntimeException("FAIL!" +e.getMessage());
         }
 	}
  

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,17 @@ public class UploadController {
 		}
 		try {
 			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
-			storageService.store(file);
+			String fileName =null;
+			String pattern = Pattern.quote(System.getProperty("file.separator"));
+			String[] str =file.getOriginalFilename().split(pattern);
+			if(str.length>0)
+				fileName =str[str.length-1];
+			else
+				fileName=str[0];
+			storageService.store(file,fileName);
 
 			// Calling CSVReading Service TO read and extract the data ;
-			if (csvFileProcessorService.read(UploadedFolderLocation + file.getOriginalFilename())) {
+			if (csvFileProcessorService.read(UploadedFolderLocation + fileName)) {
 				// CSVMergeUtil.moveFileToDestination(UploadedFolderLocation,
 				// archievedFileLocation);
 				String trainingSetInitialFilePath = mergedFilePath;
@@ -84,7 +92,7 @@ public class UploadController {
 				return "redirect:/uploadStatus";
 			}
 			redirectAttributes.addFlashAttribute("message",
-					"You successfully uploaded '" + file.getOriginalFilename() + "'");
+					"You successfully uploaded '" + fileName + "'");
 		} catch (IOException e) {
 			logger.error("Some Problem Occurred " + e.getMessage());
 			redirectAttributes.addFlashAttribute("message", "There is some problem occured please check logs ");
