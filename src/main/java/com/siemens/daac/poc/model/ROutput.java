@@ -14,6 +14,7 @@ public class ROutput implements Serializable {
 	private String errorMsg;
 	private String transactionId;
 	private String algoType;
+	private Object rResponse;
 	public int getTrueFloodCount() {
 		return trueFloodCount;
 	}
@@ -50,6 +51,13 @@ public class ROutput implements Serializable {
 	}
 	public void setAlgoType(String algoType) {
 		this.algoType = algoType;
+	}
+	
+	public Object getrResponse() {
+		return rResponse;
+	}
+	public void setrResponse(Object rResponse) {
+		this.rResponse = rResponse;
 	}
 	@Override
 	public String toString() {

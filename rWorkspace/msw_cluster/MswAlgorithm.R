@@ -69,12 +69,18 @@ CalculateMSWMatrix <-  function(input_file_path ,
         quote = FALSE
       )
     }
-  
-  max_range = max(scores_frame,na.rm = TRUE)
-  print(max_range)
-        
-  
-  return(scores_frame)
+
+  minvalue = apply(scores_frame,2,min)
+ minvalue =minvalue[3];    
+  maxvalue = apply(scores_frame,2,max)
+ maxvalue = maxvalue[3]
+ diffvalue = (as.numeric(maxvalue)-as.numeric(minvalue))/3
+ value1 =as.numeric(minvalue)+diffvalue
+ value2 =value1+diffvalue
+ out = split(scores_frame,cut(scores_frame$score,c(minvalue,value1,value2, maxvalue),include.lowest = TRUE))
+ # print(out)
+ lapply(names(out), function(x) {write.table(out[[x]],file=paste0("cluster",x,".csv"),quote = FALSE,row.names = FALSE)});
+  return(out)
   }
  
 
