@@ -244,7 +244,7 @@ public class UploadController {
 	}
 
 
-	@PostMapping
+	@PostMapping("/test")
 	public String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
