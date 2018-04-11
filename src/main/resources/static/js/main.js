@@ -57,11 +57,27 @@ function fire_ajax_submit() {
 	});
 
 }
-
 function getDataAndPlot() {
+	$.ajax({
+		type : "GET",
+		// contentType: "application/json",
+		url : "/getCsv",
+		cache : false,
+		// timeout: 600000,
+		success : function(data) {
+			processData(data);
+			console.log("SUCCESS : ", data);
+
+		},
+		error : function(e) {
+			console.log("ERROR : ", e);
+
+		}
+	});
+/*function getDataAndPlot() {
 	Plotly.d3.csv("result.csv", function(data){ processData(data) } );
 
-}
+}*/
 
 function processData(allRows) {
 	var ss = allRows.split(",");
