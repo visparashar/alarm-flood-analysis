@@ -71,23 +71,33 @@ function processData(allRows) {
 	var i;
 	var j;
 	var k;
+	var f=0;
+	var n=0;
 	for (i = 0; i < ss.length; i++) {
 		var eachRow = ss[i].split("#~#");
-		if(x1.indexOf(eachRow[0])==-1)
-		x1.push(eachRow[0]);
-		if(y1.indexOf(eachRow[1])==-1)
-		y1.push(eachRow[1]);
+		if (x1.indexOf(eachRow[0]) == -1)
+			x1.push(eachRow[0]);
+		if (y1.indexOf(eachRow[1]) == -1)
+			y1.push(eachRow[1]);
 	}
-	for (k = 0; k < ss.length; k++) {
-		var tempArr =[];
-		for (j = 0; j < ss.length; j++) {
-			var dupRow = ss[k].split("#~#");
-			tempArr[j]=dupRow[2];
+	var tempArr = [];
+	var temp=ss[0].split("#~#")[0];
+	for (j = 0; j < ss.length; j++) {
+		var row = ss[j].split("#~#");
+		if (temp == row[0]) {
+			tempArr[f] = row[2];
+			f=f+1;
+		} else {
+			z1[n] = tempArr;
+			n=n+1;
+			temp = row[0];
+			f=0;
+			tempArr = [];
+			tempArr[f] = row[2];
+			f=1;
 		}
-//		alert(tempArr);
-		z1[k]=tempArr;
+
 	}
-//	alert(z1);
 	var data = [ {
 		z : z1,
 		x : x1,
