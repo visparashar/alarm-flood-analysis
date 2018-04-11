@@ -5,7 +5,7 @@ import java.io.IOException;
 public interface FileProcessorService {
 	
 	
-	public boolean read(String filePath) throws IOException;
+	public boolean read(String filePath,boolean forTraining) throws IOException;
 	
 	public boolean write();
 	

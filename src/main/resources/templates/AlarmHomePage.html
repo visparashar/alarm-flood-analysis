@@ -2,17 +2,16 @@
 <html xmlns:th="http://thymeleaf.org">
 <head>
 <title>Alarm Flood Analysis</title>
-<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+<link href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"
 	rel="stylesheet" />
-<!-- Plotly.js -->
+<!-- <link href="css/custom.css" rel="stylesheet" /> -->
+<script type="text/javascript" src="webjars/jquery/3.3.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="js/plotly-latest.min.js"></script>
-<script type="text/javascript" src="js/jquery.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script type="text/javascript" src="js/cluster.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 
-	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	
-<!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
-<!-- Numeric JS -->
 </head>
 <script th:inline="javascript">
 	/*<![CDATA[*/
@@ -57,9 +56,9 @@
 	}
 
 	function onTrain() {
-	document.getElementById('train').style.display = 'block';
+		document.getElementById('train').style.display = 'block';
 	}
-	
+
 	/*]]>*/
 </script>
 
@@ -77,7 +76,7 @@
 		</div>
 	</div>
 
-	<nav role="navigation" class="navbar navbar-default">
+	<!-- <nav role="navigation" class="navbar navbar-default">
 		<div class="">
 			<a href="http://132.186.96.248:8080/daacportal/" class="navbar-brand">DAAC
 				Portal</a>
@@ -94,14 +93,14 @@
 						Help Document</a></li>
 			</ul>
 		</div>
-	</nav>
-
-	<div class="container padding-0">
-		<div class="row">
-			<div class="col-sm-3">
+	</nav> -->
+	<nav role="navigation" id="trainingset-container-id"
+		class="navbar navbar-default">
+		<div class="row" style="margin-top: 10px;">
+			<div class="col-md-2">
 				<B>Load Training Data</B>
 			</div>
-			<div class="col-sm-5">
+			<div class="col-md-6">
 				<form method="POST" action="/upload"
 					onsubmit="return Validate(this);" enctype="multipart/form-data">
 					<div class="col-sm-6">
@@ -112,34 +111,34 @@
 						<input type="submit" class="btn btn-success btn-sm" value="Submit" />
 					</div>
 				</form>
-
 			</div>
-			<div th:if="${message}" class="col-sm-3">
+			<div th:if="${status =='true'}" class="col-md-4">
 				<div class="row">
-					<div class="col-md-8">
+					<div class="col-md-6">
 						<B>Click Here To Train Data</B>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-6">
 						<form id="train-form">
-							<input type="submit" value="Train Data" id ="train-btn"
+							<input type="submit" value="Train Data" id="train-btn"
 								class="btn btn-success btn-sm" onClick="runRAndShowMatrix()" />
 						</form>
 					</div>
 				</div>
-
-
 			</div>
 		</div>
-	</div>
-	<hr />
+	</nav>
 	<div class="container padding-0">
 
-		<div th:if="${message}">
-			<B>Status Of Uploaded File</B>
-			<h6 th:text="${message}" />
-			<hr />
+		<div id="messageboxid">
+			<div id="uploadstatus" th:if="${message}">
+				<B>Status Of Uploaded File</B>
+				<h6 th:text="${message}" />
+				<hr />
+			</div>
+		</div>
+		<div th:if="${status =='true'}">
 			<div class="row">
-				<div id="leftpanel" class="col-md-6">
+				<div id="leftpanel" class="col-md-4">
 					<!--  Left side panel -->
 					<div class="panel panel-success">
 						<div class="panel-heading">Status Of Uploaded Floods</div>
@@ -171,7 +170,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="matrix" style="display: none;" class="col-md-6">
+				<div id="matrix" style="display: none;" class="col-md-8">
 					<!--  Right side panel -->
 					<div class="panel panel-success">
 						<div class="panel-heading">Trained Data Result</div>
@@ -179,45 +178,68 @@
 							<ul class="nav nav-tabs">
 								<li class="active"><a data-toggle="tab" href="#sim">Similarity
 										Matrix</a></li>
-								<li><a data-toggle="tab" href="#cluster"
-									aria-expended="false">Cluster Diagram</a></li>
+								<li><a data-toggle="tab" href="#cluster">Cluster
+										Diagram</a></li>
 							</ul>
 							<div class="tab-content">
-								<div id="sim" class="tab-pane fade in active">
+								<div id="sim" class="tab-pane in active">
+									<div id="plotsimilarity">
+										<!-- show the  similarity here  -->
+									</div>
 								</div>
-								<div id="cluster" class="tab-pane fade">
-									<p>Cluster Matrix</p>
+								<div id="cluster" class="tab-pane">
+									<div class="row">
+										<div class="col-md-4"
+											style="padding-right: 10px; padding-left: 20px">
+											<div class="panel panel-success">
+												<div class="panel-heading">Cluster 1</div>
+												<div class="panel-body" id="cluster1"></div>
+											</div>
+										</div>
+										<div class="col-md-4"
+											style="padding-right: 10px; padding-left: 20px">
+											<div class="panel panel-success">
+												<div class="panel-heading">Cluster 2</div>
+												<div class="panel-body" id="cluster2"></div>
+											</div>
+										</div>
+										<div class="col-md-4"
+											style="padding-right: 10px; padding-left: 20px">
+											<div class="panel panel-success">
+												<div class="panel-heading">Cluster 3</div>
+												<div class="panel-body" id="cluster3"></div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
-
-
-
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- Predict Flood  -->
-		<div class="row" id="train" style="display: none;">
-			<div class="col-sm-3">
-				<B>Upload Test Flood</B>
-			</div>
-			<div class="col-sm-5">
-				<form method="POST" action="/upload"
-					onsubmit="return Validate(this);" enctype="multipart/form-data">
-					<div class="col-sm-6">
+		<!-- prediction modal -->
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">
 
-						<input type="file" name="file" accept=".zip" />
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Modal Header</h4>
 					</div>
-					<div class="col-sm-6">
-						<input type="submit" class="btn btn-success btn-sm" value="Submit" />
+					<div class="modal-body">
+						<p>Some text in the modal.</p>
 					</div>
-				</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
 
 			</div>
 		</div>
 
 	</div>
-	
+
 </body>
 </html>

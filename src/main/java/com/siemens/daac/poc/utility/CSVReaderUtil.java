@@ -62,7 +62,7 @@ public class CSVReaderUtil {
 		return propValue;
 	}
 
-	public static Map<String, String> processInputFile(String inputFilePath) throws IOException {
+	public static Map<String, String> processInputFile(String inputFilePath,boolean forTraining) throws IOException {
 		Map<String, String> floodStatusMap = new HashMap<String, String>();
 		Set<String> inputSet = new HashSet<String>();
 		String floodStatus = new String();
@@ -79,7 +79,7 @@ public class CSVReaderUtil {
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 				System.out.println(entry.getName());
-				
+				if(entry.getName().contains(".csv")) {
 				InputStream inputFS = zipFile.getInputStream(entry);
 				br = new BufferedReader(new InputStreamReader(inputFS));
 				inputSet = br.lines().skip(1).map(mapToItem).collect(Collectors.toSet());
@@ -96,6 +96,9 @@ public class CSVReaderUtil {
 				floodStatusMap.put(entry.getName(),floodStatus);
 				addColumn(inputFilePath, floodStatus, entry.getName());
 				count = CSVReaderConstant.ZERO;
+			}else {
+				throw new IOException("the zip doesn't contain csv files");
+			}
 			}
 		} finally {
 			if (br != null) {

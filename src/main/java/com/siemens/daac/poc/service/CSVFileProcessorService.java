@@ -16,10 +16,10 @@ public class CSVFileProcessorService implements FileProcessorService{
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
 	@Override
-	public boolean read(String filePath) throws IOException {
+	public boolean read(String filePath ,boolean forTraining) throws IOException {
 		//		Calling CSV Reader Util
 		if(filePath!=null && !filePath.isEmpty()) {
-			HashMap<String,String> fileNameWithStatusMap = (HashMap<String, String>) CSVReaderUtil.processInputFile(filePath);
+			HashMap<String,String> fileNameWithStatusMap = (HashMap<String, String>) CSVReaderUtil.processInputFile(filePath,forTraining);
 //			TODO : There should be atleast one true and one false
 			if(fileNameWithStatusMap.values().contains("1") && fileNameWithStatusMap.values().contains("0"))
 			{

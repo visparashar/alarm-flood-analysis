@@ -81,7 +81,7 @@ public class UploadController {
 			storageService.store(file, fileName);
 
 			// Calling CSVReading Service TO read and extract the data ;
-			if (csvFileProcessorService.read(UploadedFolderLocation + fileName)) {
+			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,true)) {
 				// CSVMergeUtil.moveFileToDestination(UploadedFolderLocation,
 				// archievedFileLocation);
 				String trainingSetInitialFilePath = mergedFilePath;
@@ -89,18 +89,24 @@ public class UploadController {
 				// setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
 				callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath);
+				status =true;
 			} else {
+				status =false;
 				logger.error("Please Upload Valid Zip");
 				redirectAttributes.addFlashAttribute("message", "Please Upload Valid Zip ");
+				redirectAttributes.addFlashAttribute("status", "false");
 				return "redirect:/uploadStatus";
 			}
 			redirectAttributes.addFlashAttribute("message", "You successfully uploaded '" + fileName + "'");
+			redirectAttributes.addFlashAttribute("status", "true");
 		} catch (IOException e) {
+			status=false;
 			logger.error("Some Problem Occurred " + e.getMessage());
-			redirectAttributes.addFlashAttribute("message", "There is some problem occured please check logs ");
+			redirectAttributes.addFlashAttribute("message", "There is some problem occured "+e.getMessage());
+			redirectAttributes.addFlashAttribute("status", "false");
 			return "redirect:/uploadStatus";
 		}
-		status = true;
+
 		return "redirect:/uploadStatus";
 	}
 
@@ -210,7 +216,7 @@ public class UploadController {
 					// use comma as separator
 					String[] country = line.split(cvsSplitBy);
 					retStrt=retStrt+country[0]+separator+country[1]+separator+country[2]+cvsSplitBy;
-					
+
 				}
 				cnt++;
 
@@ -231,10 +237,39 @@ public class UploadController {
 			}
 		}
 		if(retStrt.contains(cvsSplitBy))
-		retStrt=retStrt.substring(0, retStrt.length()-1);
+			retStrt=retStrt.substring(0, retStrt.length()-1);
 
 		return retStrt;
 
 	}
 
+
+	@PostMapping
+	public String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+		if (file.isEmpty()) {
+			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+			return "redirect:uploadStatus";
+		}
+		try {
+			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
+			String fileName = null;
+			String pattern = Pattern.quote(System.getProperty("file.separator"));
+			String[] str = file.getOriginalFilename().split(pattern);
+			if (str.length > 0)
+				fileName = str[str.length - 1];
+			else
+				fileName = str[0];
+			storageService.store(file, fileName);
+
+			// Calling CSVReading Service TO read and extract the data ;
+			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,false)) {
+
+			}
+
+		}catch(IOException e) {
+			//		TODO: vishal
+		}
+		return "AlarmHomePage";
+
+	}
 }
