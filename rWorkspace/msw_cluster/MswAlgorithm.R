@@ -23,7 +23,7 @@ CalculateMSWMatrix <-  function(input_file_path ,
 		#   return (FALSE)
 		# }
 		data_set = data_set %>% na.omit()
-		alarm_seq = paste0(data_set[,5], data_set[,6])
+		alarm_seq = paste0(data_set[,CONST_ALARMTAG_INDEX], data_set[,CONST_ALARMID_INDEX])
 		
 		# Writing csv data to text files
 		write.table(
@@ -44,31 +44,15 @@ CalculateMSWMatrix <-  function(input_file_path ,
 	scores_pair=pairwise_candidates(scores)
 	scores_frame = as.data.frame(scores_pair)
 	#distance matrix for hierarchical clustering
-	scores_matrix = as.data.frame.matrix(scores)
-	d <- dist(scores_matrix, method = "euclidean")
+	scores_matrix = as.data.frame.matrix(scores)	
 	#merge similarity index along with prefilter values 
 	setwd(similarity_index_path)
-	res_file <- paste0(similarity_index_path,"/","result", ".csv") 
-	if(file.exists(res_file)){
-		write.table(
-				scores_frame,
-				file = paste0("result", ".csv"),
-				append = TRUE,
-				sep=',',
-				quote = FALSE,
-				col.names = FALSE,
-				row.names=FALSE
-		)
-	}
-	else
-	{
-		write.csv(
-				scores_frame,
-				file = paste0("result", ".csv"),
-				row.names = FALSE,
-				quote = FALSE
-		)
-	}
+	write.csv(
+        scores_frame,
+        file = paste0("msw_result", ".csv"),
+        row.names = FALSE,
+        quote = FALSE
+      )
 	
 	minvalue = apply(scores_frame,2,min)
 	minvalue =minvalue[3];    

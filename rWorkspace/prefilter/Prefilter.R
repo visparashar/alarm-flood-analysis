@@ -8,7 +8,7 @@ PrefilterFunc <-
 	
     #assuming a thresold value
 	#changed the thresold value using property file - vishal
-    thresold = 0.6
+    thresold = 0.1
 	#defining a dataframe for prefilter similarity
     df_total = data.frame()
     library(magrittr)
@@ -50,15 +50,15 @@ PrefilterFunc <-
           nrow_f2 = nrow(data_set2)
           max_nrow = max(nrow_f1, nrow_f2)
           #Check for id column name
-          alarm_seq1 = paste0(data_set1[,5], data_set1[,6])
-          alarm_seq2 = paste0(data_set2[,5], data_set2[,6])
+          alarm_seq1 = paste0(data_set1[,CONST_ALARMTAG_INDEX], data_set1[,CONST_ALARMID_INDEX])
+          alarm_seq2 = paste0(data_set2[,CONST_ALARMTAG_INDEX], data_set2[,CONST_ALARMID_INDEX])
           common_seq = intersect(alarm_seq1, alarm_seq2)
           len1 = length(common_seq)
           si = len1 / max_nrow
           if (si >= thresold)
           {
-            #saving a file to a particular directory
-            setwd(similarity_index_path)
+            #writing prefilter similarity to a file
+            setwd(prefilter_result_path)
             a = paste0("Flood", i)
             b = paste0("Flood", j)
             score = si
@@ -66,7 +66,7 @@ PrefilterFunc <-
             df_total <- rbind(df_total, sm)
             write.csv(
               df_total,
-              file = paste0("result", ".csv"),
+              file = paste0("prefilter_result", ".csv"),
               row.names = FALSE,
               quote = FALSE
             )
