@@ -63,6 +63,9 @@ public class CSVReaderUtil {
 	}
 
 	public static Map<String, String> processInputFile(String inputFilePath,boolean forTraining) throws IOException {
+		if(forTraining) {
+			return processInputFileForTest(inputFilePath);
+		}else {
 		Map<String, String> floodStatusMap = new HashMap<String, String>();
 		Set<String> inputSet = new HashSet<String>();
 		String floodStatus = new String();
@@ -110,6 +113,7 @@ public class CSVReaderUtil {
 		}
 		CSVMergeUtil.moveFileToDestination(inputFilePath,CommonUtils.readProperty("upload-archieved-folder")+"/");
 		return floodStatusMap;
+		}
 	}
 
 	private static Function<String, String> mapToItem = (line) -> {
@@ -192,5 +196,73 @@ public class CSVReaderUtil {
 		processInputFile("ALARM_LIST_ALARM_FLOODS_2016-12-01.zip");
 	}*/
 	
+	private static double cnt = 0;
+
+	public static Map<String, String> processInputFileForTest(String inputFilePath) {
+		Set<String> inputSet = new HashSet<String>();
+		Map<String, String> statusPercentageMap = new HashMap<String, String>();
+		String floodStatus = new String();
+		double percentageOfTrueFlood = 0.0;
+		try {
+			File inputF = new File(inputFilePath);
+			InputStream inputFS = new FileInputStream(inputF);
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputFS));
+			inputSet = br.lines().skip(1).map(mapToItemForTest).collect(Collectors.toSet());
+			percentageOfTrueFlood = (inputSet.size() / cnt) * 100;
+			if (percentageOfTrueFlood > 60) {
+				floodStatus = CSVReaderConstant.TRUE;
+			} else if (percentageOfTrueFlood < 30) {
+				floodStatus = CSVReaderConstant.FALSE;
+			} else {
+				floodStatus = CSVReaderConstant.NOT_SURE;
+			}
+			statusPercentageMap.put(CSVReaderConstant.FLOOD_STATUS, floodStatus);
+			statusPercentageMap.put(CSVReaderConstant.PERCENTAGE_OF_TRUE_FLOOD, String.valueOf(percentageOfTrueFlood));
+			addColumnForTest(inputFilePath.replace(".csv", ""),floodStatus);
+			cnt = 0;
+		} catch (IOException e) {
+
+		}
+		return statusPercentageMap;
+	}
+
+	private static Function<String, String> mapToItemForTest = (line) -> {
+		String[] p = line.split(",");
+		cnt++;
+		return p[4] + p[5];
+	};
+
+	private static void addColumnForTest(String fileName, String floodStatus) throws IOException {
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		final String lineSep = System.getProperty(CSVReaderConstant.LINE_SEPARATOR);
+
+		try {
+			File file = new File(fileName + CSVReaderConstant.CSV_EXTENSION);
+			File file2 = new File("src/main/resources/"+fileName + CSVReaderConstant.FILE_SEP + CSVReaderConstant.CSV_EXTENSION);// so the
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file2)));
+			String line = null;
+			int i = 0;
+			for (line = br.readLine(); line != null; line = br.readLine(), i++) {
+				if (i==0) {
+					String addedColumn = CSVReaderConstant.COMMA + CSVReaderConstant.FLOOD_STATUS_CSV;
+					bw.write(line + addedColumn + lineSep);
+				} else {
+				String addedColumn = String.valueOf(CSVReaderConstant.COMMA + floodStatus);
+				bw.write(line + addedColumn + lineSep);
+				}
+			}
+
+		} catch (Exception e) {
+			
+		} finally {
+			if (br != null)
+				br.close();
+			if (bw != null)
+				bw.close();
+		}
+
+	}
 	
 }
