@@ -59,8 +59,8 @@ PrefilterFunc <-
           {
             #writing prefilter similarity to a file
             setwd(prefilter_result_path)
-            a = paste0("Flood", i)
-            b = paste0("Flood", j)
+            a = f1
+            b = f2
             score = si
             sm = data.frame(a, b, score)
             df_total <- rbind(df_total, sm)

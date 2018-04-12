@@ -28,7 +28,7 @@ CalculateMSWMatrix <-  function(input_file_path ,
 		# Writing csv data to text files
 		write.table(
 				alarm_seq,
-				file = paste0(msw_text_result_path, "/", "Flood", i, ".txt"),
+				file = paste0(msw_text_result_path, "/", f1, ".txt"),
 				quote = FALSE,
 				row.names = FALSE,
 				col.names = FALSE
@@ -42,9 +42,7 @@ CalculateMSWMatrix <-  function(input_file_path ,
 	#pairwise comparison method
 	scores <- pairwise_compare(corpus,jaccard_similarity)
 	scores_pair=pairwise_candidates(scores)
-	scores_frame = as.data.frame(scores_pair)
-	#distance matrix for hierarchical clustering
-	scores_matrix = as.data.frame.matrix(scores)	
+	scores_frame = as.data.frame(scores_pair)		
 	#merge similarity index along with prefilter values 
 	setwd(similarity_index_path)
 	write.csv(
