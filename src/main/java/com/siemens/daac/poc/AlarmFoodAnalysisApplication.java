@@ -7,8 +7,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jms.annotation.EnableJms;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.service.RManager;
 import com.siemens.daac.poc.service.StorageService;
 
@@ -30,11 +31,13 @@ public class AlarmFoodAnalysisApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ProjectConstants.isTrueFloodStatusUpdated=false;
 			storeService.deleteAll();
 			storeService.init();
+			storeService.deleteOldPreRequesFiles();
 			
 	}
+	
+
 
 	
 }
