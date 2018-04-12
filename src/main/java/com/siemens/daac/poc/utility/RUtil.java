@@ -28,7 +28,11 @@ public class RUtil {
 			 outPutFilePrefilter.mkdirs();
 		File similarityMatrxiPath = new File(CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location"));
 		if(!similarityMatrxiPath.exists())
-			return similarityMatrxiPath.mkdirs();
+			similarityMatrxiPath.mkdirs();
+		File clusterPath = new File(CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location")+"/clusters");
+		if(!clusterPath.exists()){
+			return clusterPath.mkdirs();
+		}
 		return true;
 		
 	}
