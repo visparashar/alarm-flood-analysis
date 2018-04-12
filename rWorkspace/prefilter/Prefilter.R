@@ -8,7 +8,7 @@ PrefilterFunc <-
 	
     #assuming a thresold value
 	#changed the thresold value using property file - vishal
-    thresold = 0.1
+    thresold = 1.0
 	#defining a dataframe for prefilter similarity
     df_total = data.frame()
     library(magrittr)

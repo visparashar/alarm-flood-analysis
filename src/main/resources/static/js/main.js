@@ -10,13 +10,14 @@ $(document).ready(function () {
 				"<div class='row' id='trainuploaddiv'>" +
 				"<div class='col-md-3'><B>Upload Test Flood</B></div>"
 				+"<div class='col-md-5'>" +
-						"<form id='fileinfo' enctype='multipart/form-data' action='/upload' method='post' name='fileinfo'>" +
-						"<div class='col-sm-6'>" +
+				"<form id='fileinfo' enctype='multipart/form-data' action='/test' method='post' name='fileinfo'>" +
+				"<div class='col-sm-6'>" +
 				"<input type='file' name='file' accept='.csv' /></div>" +
-				"<div class='col-sm-4'>" +
-				"<input type='submit' id='uploadtestbtn' class='btn btn-success btn-sm' value='Submit' />" +
-			"</div>" +
 				"</form>" +
+				"<div class='col-sm-4'>" +
+				"<input type='submit' onclick='uploadTestDataUsingJqueryForm()' id='uploadtestbtn' class='btn btn-success btn-sm' value='Submit' />" +
+				"</div>" +
+				
 				"</div></div></div>"
 		);
 		fire_ajax_submit();
@@ -36,7 +37,7 @@ $(document).ready(function () {
 
 function fire_ajax_submit() {
 //	alert("in fire_ajax");
-	debugger;
+//	debugger;
 	$.ajax({
 		type: "GET",
 //		contentType: "application/json",
@@ -74,10 +75,11 @@ function getDataAndPlot() {
 
 		}
 	});
-/*function getDataAndPlot() {
+	/*function getDataAndPlot() {
 	Plotly.d3.csv("result.csv", function(data){ processData(data) } );
 
 }*/
+}
 
 function processData(allRows) {
 	var ss = allRows.split(",");
@@ -121,8 +123,8 @@ function processData(allRows) {
 		type : 'heatmap'
 	} ];
 	var layout = {
-		title : 'Similarity Matrix',
-		showlegend : true
+			title : 'Similarity Matrix',
+			showlegend : true
 	};
 
 	Plotly.newPlot('plotsimilarity', data, layout, {
@@ -131,7 +133,7 @@ function processData(allRows) {
 }
 
 /*function processData(allRows) {
-	
+
 	console.log(allRows);
 	var data = [
 		{
@@ -167,7 +169,7 @@ function processData(allRows) {
 		  console.log( 'X',x, 'Y',y, 'SD',z );
 		  makePlotly( x, y, z );*/
 
-	 $("#fileinfo").on('submit', function(e){ 
+/* $("#fileinfo").on('submit', function(e){ 
 		 e.preventDefault();
 		 debugger;
 		var fd = new FormData($("#fileinfo"));
@@ -185,7 +187,29 @@ function processData(allRows) {
 			contentType: false,
 			processData: false
 		});
-	});
+	});*/
 
 
+/*$(document).ready(function() { 
+	// bind 'myForm' and provide a simple callback function 
+	$('#fileinfo').ajaxForm(function() { 
+		alert("Thank you for your comment!"); 
+	}); 
+}); */
+
+function uploadTestDataUsingJqueryForm(){
+	alert("hit");
+//	$("#training-container").slideDown();
+	$('#test-container').show();
+	
+	/*$("#fileinfo").ajaxForm({
+		success: function(data){
+			alert(data);
+//			
+			$('#result').html(data);
+		},
+		dataType:"text"
+	}).submit();*/
+	
+}
 

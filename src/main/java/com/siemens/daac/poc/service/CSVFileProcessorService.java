@@ -20,6 +20,11 @@ public class CSVFileProcessorService implements FileProcessorService{
 		//		Calling CSV Reader Util
 		if(filePath!=null && !filePath.isEmpty()) {
 			HashMap<String,String> fileNameWithStatusMap = (HashMap<String, String>) CSVReaderUtil.processInputFile(filePath,forTraining);
+			if(!forTraining) {
+				if(fileNameWithStatusMap.values().contains("notSure")) {
+//					TODO need to write logic for if all the flood are true and for if there is no notSure file
+				}
+			}
 //			TODO : There should be atleast one true and one false
 			if(fileNameWithStatusMap.values().contains("1") && fileNameWithStatusMap.values().contains("0"))
 			{

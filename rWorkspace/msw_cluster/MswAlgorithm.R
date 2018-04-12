@@ -61,9 +61,13 @@ CalculateMSWMatrix <-  function(input_file_path ,
 	diffvalue = (as.numeric(maxvalue)-as.numeric(minvalue))/3
 	value1 =as.numeric(minvalue)+diffvalue
 	value2 =value1+diffvalue
+	clusterpath=paste0(similarity_index_path,"/",'clusters/')
 	out = split(scores_frame,cut(scores_frame$score,c(minvalue,value1,value2, maxvalue),include.lowest = TRUE))
 	# print(out)
-	lapply(names(out), function(x) {write.table(out[[x]],file=paste0("cluster",x,".csv"),quote = FALSE,row.names = FALSE,sep=",")});
+	count=0
+	lapply(names(out), function(x) {
+	count =count+1
+	write.table(out[[x]],file=paste0(clusterpath,"cluster",'_',count,'_',x,".csv"),quote = FALSE,row.names = FALSE,sep=",")});
 	return(out)
 }
 

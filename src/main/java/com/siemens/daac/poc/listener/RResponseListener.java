@@ -2,6 +2,7 @@ package com.siemens.daac.poc.listener;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.jms.JMSException;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.model.ROutput;
+import com.siemens.daac.poc.utility.CSVMergeUtil;
 import com.siemens.daac.poc.utility.CSVReaderUtil;
 @Component
 public class RResponseListener {
@@ -18,6 +20,15 @@ public class RResponseListener {
 
 	@Value("${mergedFilePath}")
 	String trainingSetLocation;
+	
+	@Value("${notSureFilePath}")
+	String testSetPath;
+	
+	@Value("${upload-archieved-folder}")
+	String uploadArchiedFolder;
+	
+	@Value("${r-mswcluster-similarity-matrix-folder-location}")
+	String similarityMatrixPath;
 
 	@JmsListener(destination =ProjectConstants.R_RESPONSE_QUEUE)
 	public void handleRResponse(final ROutput rOutput) throws JMSException{
@@ -33,17 +44,34 @@ public class RResponseListener {
 			System.out.println(CSVReaderUtil.falseCount);
 			System.out.println("recieved message "+rOutput);
 			File f = new File("Check_For_R_Call_Get_Completed.txt");
+			
 			try {
 				f.createNewFile();
+				CSVMergeUtil.moveFileToDestination(testSetPath, uploadArchiedFolder);
 			}catch(IOException e) {
 				System.out.println("problem occured while creating file for prediction");
 				e.printStackTrace();
 			}
 			}else if(rOutput.getAlgoType().equals(ProjectConstants.CONST_MSW_CLUSTER_ALSO)) {
-				File f = new File("check_for_mswcluster_complete.txt");
+				File f = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE);
+				File f1 = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
+				Object res =rOutput.getrResponse();
+				
 				try {
 					f.createNewFile();
+					f1.createNewFile();
+					String clusterPath = similarityMatrixPath;
+					clusterPath+="/clusters";
+					clusterPath=clusterPath.replaceAll("\\\\", "/");
+					URL resourceUrl = RResponseListener.class.getClassLoader().getResource("static/");
+//					String mypath = new ClassPathResource("WEB-INF").getPath();
+					String mypath=resourceUrl.getPath();
 					
+					System.out.println("MMMMMMMMMMMMMMMMMMMMm" + mypath);
+						if(mypath.startsWith("/")) {
+							mypath=mypath.replaceFirst("/", "");
+						}
+					CSVMergeUtil.copyFileToDestination(clusterPath, mypath+"data");					
 				}catch(IOException e) {
 					System.out.println("problem occured while creating file for mswcluster");
 					e.printStackTrace();
@@ -55,4 +83,7 @@ public class RResponseListener {
 		}
 
 	}
+	
+	
+	
 }

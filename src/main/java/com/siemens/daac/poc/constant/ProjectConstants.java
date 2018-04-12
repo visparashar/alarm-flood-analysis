@@ -33,6 +33,11 @@ public class ProjectConstants {
 	
 //	global variable
 	public static boolean isTrueFloodStatusUpdated =false;
+	
+	public static final String FILE_FLAG_FOR_PREDICTION_DONE="Check_For_R_Call_Get_Completed.txt";
+	public static final String FILE_FLAG_FOR_MSW_DONE="check_for_mswcluster_complete.txt";
+	public static final String FILE_FLAG_FOR_MSW_DONE_ONUI="check_for_mswcluster_created.txt";
+	
 
 
 

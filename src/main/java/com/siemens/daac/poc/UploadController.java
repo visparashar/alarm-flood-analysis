@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +34,7 @@ import com.siemens.daac.poc.utility.RUtil;
 
 @Controller
 public class UploadController {
-	File file = new File("Check_For_R_Call_Get_Completed.txt");
+	File file = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
 	private boolean status = false;
 
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
@@ -51,6 +53,9 @@ public class UploadController {
 
 	@Value("${user-upload-file-location}")
 	String userInputFileLocation;
+	
+	@Value("${r-mswcluster-similarity-matrix-folder-location}")
+	String similarityMatrixPath;
 
 	@Autowired
 	RManager rManager;
@@ -78,7 +83,7 @@ public class UploadController {
 				fileName = str[str.length - 1];
 			else
 				fileName = str[0];
-			storageService.store(file, fileName);
+			storageService.store(file, fileName,true);
 
 			// Calling CSVReading Service TO read and extract the data ;
 			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,true)) {
@@ -88,7 +93,7 @@ public class UploadController {
 				csvFileProcessorService.merge(trainingSetInitialFilePath);
 				// setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
-				callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath);
+				callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath ,false);
 				status =true;
 			} else {
 				status =false;
@@ -110,7 +115,7 @@ public class UploadController {
 		return "redirect:/uploadStatus";
 	}
 
-	private void callRProcess(String trainingSetPath) {
+	private void callRProcess(String trainingSetPath, boolean isRunForTesting) {
 		RInput rInput = new RInput();
 
 		trainingSetPath += "/" + ProjectConstants.TRAINING_SET_DIR_NAME;
@@ -118,11 +123,13 @@ public class UploadController {
 		rInput.setInputFilePath(trainingSetPath);
 		rInput.setOutputFilePath(rOutputFolderLocation + "/");
 		rInput.setAlgorithmType(ProjectConstants.R_PREDICTION_ALGO);
-		rInput.setRunForTraining(true);
 		String workSpace = CommonUtils.getRWorkspacePath();
 		workSpace = workSpace.replaceAll("\\\\", "/");
 		rInput.setrWorkSpacePath(workSpace);
-		rManager.sendToQueueForRExecution(rInput);
+		if(!isRunForTesting) {
+			rInput.setRunForTraining(true);
+			rManager.sendToQueueForRExecution(rInput);
+		}
 		rInput.setRunForTraining(false);
 		rManager.sendToQueueForRExecution(rInput);
 	}
@@ -201,7 +208,14 @@ public class UploadController {
 	@GetMapping("/getCsv")
 	public @ResponseBody String getCSVFile() {
 		int cnt = 0;
-		String csvFile = "result.csv";
+		File f = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE);
+		while(!f.exists()) {
+			
+		}
+		f.delete();
+		String path = CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location");
+		String csvFile = path+"/msw_result.csv";
+		System.out.println(csvFile);
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
@@ -242,34 +256,59 @@ public class UploadController {
 		return retStrt;
 
 	}
+	
+	
+	@GetMapping("/getFileNames")
+	public @ResponseBody String[] getFilesName() {
+		File fileFlag = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
+		while(!fileFlag.exists()) {
+			
+		}
+		fileFlag.delete();
+		String[] fileNames = new String[3];
+		try {
+			String clusterPath =similarityMatrixPath+"/clusters";
+			File f = new File(clusterPath);
+			if(f.isDirectory()) {
+				File[] files = f.listFiles();
+				for(int i =0;i<files.length;i++) {
+					String fName =files[i].getName();
+					fileNames[i]="./data/"+fName;
+				}
+			}
+			return fileNames;
+			
+		}catch(Exception e) {
+			return null;
+		}
+		
+	}
 
 
 	@PostMapping("/test")
-	public String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+	public @ResponseBody String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 		if (file.isEmpty()) {
+//			alert("Please Select a file to Upload");
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
-		try {
-			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
-			String fileName = null;
-			String pattern = Pattern.quote(System.getProperty("file.separator"));
-			String[] str = file.getOriginalFilename().split(pattern);
-			if (str.length > 0)
-				fileName = str[str.length - 1];
-			else
-				fileName = str[0];
-			storageService.store(file, fileName);
+		System.out.println("Test hitt!!!!!!!!!");
+		String fileName = null;
+		String pattern = Pattern.quote(System.getProperty("file.separator"));
+		String[] str = file.getOriginalFilename().split(pattern);
+		if (str.length > 0)
+			fileName = str[str.length - 1];
+		else
+			fileName = str[0];
+		storageService.store(file, fileName ,false);
 
-			// Calling CSVReading Service TO read and extract the data ;
-			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,false)) {
+		// Calling CSVReading Service TO read and extract the data ;
+//			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,false)) {
+//				will call the RProcesses -
+			callRProcess(defaultWorkspace + "/" + mergedFilePath ,true);
+			callSequenceExecutor(false);
+//			}
 
-			}
-
-		}catch(IOException e) {
-			//		TODO: vishal
-		}
-		return "AlarmHomePage";
-
+		return "<p>Got the result of upload</p>";
 	}
 }

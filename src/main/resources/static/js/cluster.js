@@ -1,6 +1,29 @@
 
 function createCluster(){
-//	alert("in cluster");
+	
+	$.ajax({
+		type: "GET",
+//		contentType: "application/json",
+		url: "/getFileNames",
+		cache: false,
+//		timeout: 600000,
+		success: function (data) {
+			plotCluster(data);
+			
+			console.log("SUCCESS : ", data);
+
+		},
+		error: function (e) {
+			console.log("ERROR : ", e);
+
+		}
+	});
+	
+}
+function plotCluster(data){
+
+	$('#cluster1-header').text(data[0]);
+
 	var diameter = 300, //max size of the bubbles
 	color = d3.scale.category20b(); //color category
 
@@ -15,15 +38,17 @@ function createCluster(){
 	.attr("viewBox","0 0 300 300")
 	.classed("svg-content",true);
 	
+	
 
-	d3.csv("cluster(0.044,0.088].csv", function(error, data) {
-
+	d3.csv(data[0], function(error, data) {
+		console.log(data);
 		//convert numerical values from strings to numbers
 		data = data.map(function(d) {
 			d.value = +d["score"];
 			return d;
-		});
+		}
 		
+		);
 //		creating tooltips for bubble
 		var tooltip =d3.select("#cluster1")
 			.append("div")
@@ -84,6 +109,8 @@ function createCluster(){
 	})
 
 //	cluster 2
+		$('#cluster2-header').text(data[1]);
+	
 var tooltip2 =d3.select("#cluster2")
 			.append("div")
 			.style("position","absolute")
@@ -103,7 +130,7 @@ var tooltip2 =d3.select("#cluster2")
 	.attr("viewBox","0 0 300 300")
 	.classed("svg-content",true);
 
-	d3.csv("cluster(0.088,0.132].csv", function(error, data) {
+	d3.csv(data[1], function(error, data) {
 
 		//convert numerical values from strings to numbers
 		data = data.map(function(d) {
@@ -155,6 +182,7 @@ var tooltip2 =d3.select("#cluster2")
 	})
 
 //	cluster 3 
+	$('#cluster3-header').text(data[2]);
 	var tooltip3 =d3.select("#cluster3")
 			.append("div")
 			.style("position","absolute")
@@ -173,7 +201,7 @@ var tooltip2 =d3.select("#cluster2")
 	.attr("class", "bubble")
 	.attr("viewBox","0 0 300 300")
 	.classed("svg-content",true);
-	d3.csv("cluster[0,0.044].csv", function(error, data) {
+	d3.csv(data[2], function(error, data) {
 
 		//convert numerical values from strings to numbers
 		data = data.map(function(d) {
