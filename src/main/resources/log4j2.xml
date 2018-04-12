@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
-  <Appenders>
-    <!-- Console Appender -->
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
-    </Console>
-    <!-- File Appender -->
-    <File name="File" fileName="logs/app.log">
-      <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
-    </File>
-    
-  </Appenders>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
+        </Property>
+    </Properties>
 
-  <Loggers>
-    <!-- Log everything in custom package -->
-    <Logger name="com.siemens.daac.poc" level="debug" additivity="false">
-      <AppenderRef ref="Console" />
-      <AppenderRef ref="File" />
-    </Logger>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
 
- <!--   <Logger name="org.springframework.boot" level="debug" additivity="false">
-      <AppenderRef ref="Console" />
-      <AppenderRef ref="File" />
-    </Logger> 
-     Log everything in Spring Core 
-    <Logger name="org.springframework.core" level="debug" additivity="false">
-      <AppenderRef ref="Console" />
-      <AppenderRef ref="File" />
-    </Logger>  -->
+        <!-- Rolling File Appender -->
+        <RollingFile name="FileAppender" fileName="logs/app.log"
+                     filePattern="logs/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
-    <Root level="error">
-      <AppenderRef ref="Console" />
-      <AppenderRef ref="File" />
-    </Root>
-    
-  </Loggers>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="com.example.log4j2demo" level="debug"
+                     additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </AsyncLogger>
+
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </Root>
+    </Loggers>
 </Configuration>
