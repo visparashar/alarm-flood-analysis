@@ -93,8 +93,11 @@ public class UploadController {
 				csvFileProcessorService.merge(trainingSetInitialFilePath);
 				// setup r prequesities for R to be run
 				setUpPreRequesiteisForR();
-				callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath ,false);
-				status =true;
+				if(ProjectConstants.isRequiredToRunPrediction){
+					logger.info("there are some notsure files in uploaded zip , calling prediction also");
+					callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath ,false);
+					status =true;
+				}
 			} else {
 				status =false;
 				logger.error("Please Upload Valid Zip");

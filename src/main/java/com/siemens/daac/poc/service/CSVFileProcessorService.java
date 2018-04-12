@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
+import com.siemens.daac.poc.constant.ProjectConstants;
 import com.siemens.daac.poc.utility.CSVMergeUtil;
 import com.siemens.daac.poc.utility.CSVReaderUtil;
 
@@ -26,14 +27,22 @@ public class CSVFileProcessorService implements FileProcessorService{
 				}
 			}
 //			TODO : There should be atleast one true and one false
-			if(fileNameWithStatusMap.values().contains("1") && fileNameWithStatusMap.values().contains("0"))
-			{
+			if(fileNameWithStatusMap.values().contains("notSure")){
+				if(fileNameWithStatusMap.values().contains("1") && fileNameWithStatusMap.values().contains("0")|| fileNameWithStatusMap.values().contains("1"))
+				{
+					logger.info("There is either only true floods or atleast one true and one false in the training set");
+					ProjectConstants.isRequiredToRunPrediction =true;
+					return true;
+				}else{
+					if(logger.isDebugEnabled())
+						logger.debug("There is no True Flood in the ZIP , So our training set is not efficient ,"
+								+ "demanding more data");
+					return false;
+				}
+			}
+			else {
+				logger.info("There is no test data in floor zip for predictions sending true");
 				return true;
-			}else {
-				if(logger.isDebugEnabled())
-					logger.debug("There is no True Flood in the ZIP , So our training set is not efficient ,"
-							+ "demanding more data");
-				return false;
 			}
 		}
 		logger.error("The FilePath is null or Empty");
