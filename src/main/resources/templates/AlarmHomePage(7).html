@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<title>Alarm Flood Analysis</title>
+<link href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet" />
+<link href="css/custom.css" rel="stylesheet" />
+<script type="text/javascript" src="webjars/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/jquery.form.js"></script>
+<script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/plotly-latest.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script type="text/javascript" src="js/cluster.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+</head>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var _validFileExtensions = [ ".csv", ".zip" ];
+	function Validate(oForm) {
+		var arrInputs = oForm.getElementsByTagName("input");
+		for (var i = 0; i < arrInputs.length; i++) {
+			var oInput = arrInputs[i];
+			if (oInput.type == "file") {
+				var sFileName = oInput.value;
+				if (sFileName.length == 0) {
+
+					alert("Please select a file to upload");
+					return false;
+				}
+				if (sFileName.length > 0) {
+					var blnValid = false;
+					for (var j = 0; j < _validFileExtensions.length; j++) {
+						var sCurExtension = _validFileExtensions[j];
+						if (sFileName.substr(
+								sFileName.length - sCurExtension.length,
+								sCurExtension.length).toLowerCase() == sCurExtension
+								.toLowerCase()) {
+							blnValid = true;
+							break;
+						}
+					}
+
+					if (!blnValid) {
+						alert("Invalid File Extension");
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+	function runRAndShowMatrix() {
+		document.getElementById('matrix').style.display = 'block';
+
+	}
+
+	function onTrain() {
+		document.getElementById('train').style.display = 'block';
+	}
+	
+	function onRCA1(){
+		document.getElementById('rca1').style.display = 'block';
+		document.getElementById('rca2').style.display = 'none';
+		document.getElementById('rca3').style.display = 'none';
+	}
+	
+	function onRCA2(){
+		document.getElementById('rca1').style.display = 'none';
+		document.getElementById('rca2').style.display = 'block';
+		document.getElementById('rca3').style.display = 'none';
+	}
+	
+	function onRCA3(){
+		document.getElementById('rca1').style.display = 'none';
+		document.getElementById('rca2').style.display = 'none';
+		document.getElementById('rca3').style.display = 'block';
+	}
+	
+
+	/*]]>*/
+</script>
+
+<body>
+
+	<div class="container-fluid padding-0">
+		<div class="row padding-0">
+			<div class="col-md-4" align="left">
+				<img src="/images/logo_siemens.jpg" style="width: 50%;" />
+			</div>
+			<div class="col-md-4">
+				<h2>Alarm Flood Analysis</h2>
+			</div>
+			<div class="col-md-4" align="right"></div>
+		</div>
+	</div>
+	<nav role="navigation" id="trainingset-container-id"
+		class="navbar navbar-default">
+		<div class="row" style="margin-top: 10px;">
+			<div class="col-md-2">
+				<B>Load Training Data</B>
+			</div>
+			<div class="col-md-6">
+				<form method="POST" action="/upload"
+					onsubmit="return Validate(this);" enctype="multipart/form-data">
+					<div class="col-sm-6">
+
+						<input type="file" name="file" accept=".zip" />
+					</div>
+					<div class="col-sm-6">
+						<input type="submit" class="btn btn-success btn-sm" value="Submit" />
+					</div>
+				</form>
+			</div>
+			<div th:if="${status =='true'}" class="col-md-4">
+				<div class="row">
+					<div class="col-md-6">
+						<B>Click Here To Train Data</B>
+					</div>
+					<div class="col-md-6">
+						<form id="train-form">
+							<input type="submit" value="Train Data" id="train-btn"
+								class="btn btn-success btn-sm" onClick="runRAndShowMatrix()" />
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<div id="main-container" class="container padding-0">
+
+
+		<div id="messageboxid">
+			<div id="uploadstatus" th:if="${message}">
+				<B>Status Of Uploaded File</B>
+				<h6 th:text="${message}" />
+				<hr />
+			</div>
+		</div>
+		<div id="test-container" style="display: none;">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-success">
+						<div class="panel-heading">Test Flood Result</div>
+						<div class="panel-body">
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse1">Uploaded Flood
+											Status</a>
+									</div>
+									<div id="collapse1" class="panel-collapse in">
+										<div id="uploadedtestdatastatus" class="panel-body"></div>
+									</div>
+								</div>
+							</div>
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse2">Cluster</a>
+									</div>
+									<div id="collapse2" class="panel-collapse collapse">
+										<div class="panel-body">Cluster 1</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse3">Root Cause
+											Analysis</a>
+									</div>
+									<div id="collapse3" class="panel-collapse collapse">
+										<div class="panel-body">rca</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div id="training-container">
+			<div th:if="${status =='true'}">
+				<div class="row">
+					<div id="leftpanel" class="col-md-12" style="float: left">
+						<!--  Left side panel -->
+						<div class="panel panel-success">
+							<div class="panel-heading">Status Of Uploaded Floods</div>
+							<div class="panel-body">
+								<div id="myDiv">
+									<!-- Plotly chart will be drawn inside this DIV -->
+								</div>
+								<script th:inline="javascript">
+									/*<![CDATA[*/
+									var tf = /*[[${trueflood}]]*/'default';
+									var ff = /*[[${falseflood}]]*/'default';
+
+									var data = [ {
+										values : [ tf, ff ],
+										labels : [ 'True Flood', 'False Flood' ],
+										type : 'pie'
+									} ];
+									var layout = {
+										title : 'Flood Status',
+										showlegend : true,
+										margin: {
+											t: 40, //top margin
+											l: 20, //left margin
+											r: 20, //right margin
+											b: 20 //bottom margin
+										}
+									};
+									
+									Plotly.newPlot('myDiv', data, layout, {
+										displayModeBar : false
+									});
+									
+
+									/*]]>*/
+								</script>
+							</div>
+						</div>
+					</div>
+					<div id="matrix" style="display: none;" class="col-md-8" >
+						<!--  Right side panel -->
+						<div class="panel panel-success">
+							<div class="panel-heading">Trained Data Result</div>
+							<div class="panel-body" style="min-height: 570px; max-height: 570px;">
+								<ul class="nav nav-tabs">
+									<li class="active"><a data-toggle="tab" href="#sim">Similarity
+											Matrix</a></li>
+									<li><a data-toggle="tab" href="#cluster">Cluster
+											Diagram</a></li>
+								</ul>
+								<div class="tab-content">
+									<div id="sim" class="tab-pane in active">
+										<div id="plotsimilarity">
+											<!-- show the  similarity here  -->
+										</div>
+									</div>
+									<div id="cluster" class="tab-pane">
+										<div class="row">
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster1-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster1"></div>
+													<div class="panel-footer"><button class="btn btn-success" onClick="onRCA1()">Root Cause</button></div>
+												</div>
+											</div>
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster2-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster2"></div>
+													<div class="panel-footer"><button class="btn btn-success" onClick="onRCA2()">Root Cause</button></div>
+												</div>
+											</div>
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster3-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster3"></div>
+													<div class="panel-footer"><button class="btn btn-success" onClick="onRCA3()">Root Cause</button></div>
+												</div>
+											</div>
+										</div>
+										<div class="row"><br/></div>
+										<div class="row" id="rca1" style="display:none">
+										<div class="panel panel-success">	
+											<div class="panel-body">RCA of cluster 1</div>
+										</div>      									
+										</div>
+										<div class="row" id="rca2" style="display:none">
+										<div class="panel panel-success">
+											<div class="panel-body">RCA of cluster 2 </div>
+										</div>      									
+										</div>
+										<div class="row" id="rca3" style="display:none">
+										<div class="panel panel-success">
+											<div class="panel-body">RCA of cluster 3</div>
+										</div>      									
+										</div>	
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
