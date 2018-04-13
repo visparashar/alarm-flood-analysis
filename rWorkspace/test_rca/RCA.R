@@ -6,8 +6,11 @@ library(tm)
 #function to compare test data with cluster data
 compare_to_cluster <-
   function(textform_test_data_path,
-           recommendation_file_path)
+           recommendation_file_path,
+           test_filename)
   {
+    print(test_filename)
+    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
     setwd(textform_test_data_path)
     dir <- Corpus(DirSource(textform_test_data_path))
     corpus <-
@@ -15,8 +18,9 @@ compare_to_cluster <-
     bind = NULL
     maxm = -1
     similar_file = ""
-    for (j in 1:3) {
-      similarity = jaccard_similarity(corpus[[paste0("Cluster", j)]], corpus[["Test"]])
+    
+    for (j in 1:CONST_CLUSTER_LENGTH) {
+      similarity = jaccard_similarity(corpus[[paste0(CONST_CLUSTER, j)]], corpus[[test_filename]])
       similarity_frame = as.data.frame(similarity)
       if (maxm < similarity)
       {
@@ -47,10 +51,11 @@ RootCauseAnalysis <-
            textform_test_data_path,
            recommendation_file_path) {
     #read test file
+    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
     setwd(test_data_path)
     filenames <- list.files(test_data_path, pattern = '*.csv')
     data_set <-
-      try(read.csv(filenames[1], na.strings = c("", "NA")), silent = TRUE)
+      try(read.csv(filenames, na.strings = c("", "NA")), silent = TRUE)
     if (inherits(data_set, "try-error"))
     {
       message_string = paste("Error 1: Unable to read file")
@@ -58,19 +63,23 @@ RootCauseAnalysis <-
       print (message_string)
       return (FALSE)
     }
+    
+    test_filename = file_path_sans_ext(filenames)
     data_set = data_set %>% na.omit()
     alarm_seq = paste0(data_set[, CONST_ALARMTAG_INDEX], data_set[, CONST_ALARMID_INDEX])
     # Writing csv data to text files
     write.table(
       alarm_seq,
-      file = paste0(textform_test_data_path, "/", "Test", ".txt"),
+      file = paste0(textform_test_data_path, "/", test_filename , ".txt"),
       quote = FALSE,
       row.names = FALSE,
       col.names = FALSE
     )
     
     #compare  test file with cluster files
-    compare_to_custer(textform_test_data_path, recommendation_file_path)
+    compare_to_cluster(textform_test_data_path,
+                       recommendation_file_path,
+                       test_filename)
     
     
   }
