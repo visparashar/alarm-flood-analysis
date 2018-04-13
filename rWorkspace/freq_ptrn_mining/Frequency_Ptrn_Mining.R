@@ -5,8 +5,7 @@ library(tm)
 
 #function to compare files from text dataset
 compare_files <- function(input_file_path, file_compare_comb_path)
-{
-  source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+{  
   setwd(input_file_path)
   filenames <- list.files(input_file_path, pattern = '*.txt')
   len = length(filenames)
@@ -24,7 +23,8 @@ compare_files <- function(input_file_path, file_compare_comb_path)
         textset2 = readLines(f2)
         common_seq1 = textset1[textset1 %in% intersect(textset1, textset2)]
         common_seq2 = textset2[textset2 %in% intersect(textset1, textset2)]
-        merge = c(common_seq1, common_seq2)
+        merge = c(common_seq1, common_seq2) 
+		getwd()
         setwd(file_compare_comb_path)
         write.table(
           merge,
@@ -45,8 +45,7 @@ merge_cluster_sequences <-
            file_compare_comb_path,
            merged_cluster_path,
            test_data_text_path)
-  {
-    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+  {    
     setwd(cluster_result_path)
     clus_filenames <-
       list.files(cluster_result_path, pattern = '*.csv')
@@ -74,15 +73,24 @@ merge_cluster_sequences <-
             cf1 = paste0(union[k, ])
             cf2 = paste0(union[l, ])
             bind_cfname = paste0(cf1, "_", cf2)
+			bind_cfname2 = paste0(cf2, "_", cf1)
             setwd(file_compare_comb_path)
             #getting filenames from pattern mining folder
             pattern_filenames <-
               list.files(file_compare_comb_path, pattern = '*.txt')
             p_len = length(pattern_filenames)
             p_fname = paste0(bind_cfname, ".txt")
+			if(file.exists(p_fname)){
             patern_read = readLines(p_fname)
             patern_read_frame = as.data.frame(patern_read)
             merg = rbind(merg, patern_read_frame)
+			}
+			else{
+			p_fname2 = paste0(bind_cfname2, ".txt")	
+             patern_read = readLines(p_fname2)	
+             patern_read_frame = as.data.frame(patern_read)	
+             merg = rbind(merg, patern_read_frame)}
+			}
           }
           
           l = l + 1
@@ -90,8 +98,7 @@ merge_cluster_sequences <-
         setwd(merged_cluster_path)
         write.table(
           merg,
-          file = paste0("Cluster", i, ".txt"),
-          append = TRUE,
+          file = paste0("Cluster", i, ".txt"),          
           row.names = FALSE,
           col.names = FALSE,
           quote = FALSE
@@ -100,8 +107,7 @@ merge_cluster_sequences <-
         setwd(test_data_text_path)
         write.table(
           merg,
-          file = paste0("Cluster", i, ".txt"),
-          append = TRUE,
+          file = paste0("Cluster", i, ".txt"),          
           row.names = FALSE,
           col.names = FALSE,
           quote = FALSE
@@ -117,8 +123,7 @@ merge_cluster_sequences <-
 find_most_frquent_sequence <-
   function(merged_cluster_path,
            frequency_file_path)
-  {
-    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+  {    
     #find most frequent pattern in each cluster
     setwd(merged_cluster_path)
     merged_filenames <-
@@ -153,6 +158,7 @@ find_most_frquent_sequence <-
         quote = FALSE
       )
     }
+	return(top_frq_count)
   }
 CalculateFrequentPattern <-
   function(input_file_path,
@@ -160,8 +166,7 @@ CalculateFrequentPattern <-
            cluster_result_path,
            merged_cluster_path,
            test_data_text_path,
-           frequency_file_path) {
-    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+           frequency_file_path) {    
     # function to compare files from msw text dataset
     compare_files(input_file_path, file_compare_comb_path)
     
@@ -174,7 +179,7 @@ CalculateFrequentPattern <-
     )
     
     #find most frequent pattern in each cluster
-    find_most_frquent_sequence(merged_cluster_path, frequency_file_path)
+   return( find_most_frquent_sequence(merged_cluster_path, frequency_file_path))
   }
 
 CalculateFrequentPattern(

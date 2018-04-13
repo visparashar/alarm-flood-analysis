@@ -21,13 +21,15 @@ CONST_TEST_SET="test"
 
 CONST_NAIVE_BAYES="NaiveBayes.R"
 CONST_PREFILTER_FILENAME="Prefilter.R"
-CONST_MSW_CLUSTER_FILENAME="MswAlgorithm.R"
+CONST_MSW_CLUSTER_FILENAME="MswAlgorithm.R"	
+CONST_FREQ_PTRN_MINING_FILENAME="Frequency_Ptrn_Mining.R"
 
 
 # Algorithm Names
 CONST_PREDICTION_ALOG ="prediction"
 CONST_PREFILTER_ALGO="prefilter"
 CONST_MSW_CLUSTER_ALSO="cluster"
+CONST_FREQUENCY_COUNT_ALGO="frequencyalgo"
 
 
 # different path location of algorithms

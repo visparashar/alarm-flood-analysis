@@ -9,8 +9,7 @@ compare_to_cluster <-
            recommendation_file_path,
            test_filename)
   {
-    print(test_filename)
-    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+    print(test_filename)    
     setwd(textform_test_data_path)
     dir <- Corpus(DirSource(textform_test_data_path))
     corpus <-
@@ -50,8 +49,7 @@ RootCauseAnalysis <-
   function(test_data_path,
            textform_test_data_path,
            recommendation_file_path) {
-    #read test file
-    source("C:/Users/Khushboo/Documents/prefilter/filename_constants.R")
+    #read test file    
     setwd(test_data_path)
     filenames <- list.files(test_data_path, pattern = '*.csv')
     data_set <-
