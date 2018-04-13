@@ -43,10 +43,14 @@ public class RResponseListener {
 			System.out.println(CSVReaderUtil.trueCount);
 			System.out.println(CSVReaderUtil.falseCount);
 			System.out.println("recieved message "+rOutput);
-			File f = new File("Check_For_R_Call_Get_Completed.txt");
+			
 			
 			try {
-				f.createNewFile();
+				if(!rOutput.isRunForTraining())
+				{
+					File f = new File("Check_For_R_Call_Get_Completed.txt");
+					f.createNewFile();
+				}
 				CSVMergeUtil.moveFileToDestination(testSetPath, uploadArchiedFolder);
 			}catch(IOException e) {
 				System.out.println("problem occured while creating file for prediction");
@@ -56,10 +60,8 @@ public class RResponseListener {
 				File f = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE);
 				File f1 = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
 				Object res =rOutput.getrResponse();
-				
 				try {
 					f.createNewFile();
-					f1.createNewFile();
 					String clusterPath = similarityMatrixPath;
 					clusterPath+="/clusters";
 					clusterPath=clusterPath.replaceAll("\\\\", "/");
@@ -71,7 +73,8 @@ public class RResponseListener {
 						if(mypath.startsWith("/")) {
 							mypath=mypath.replaceFirst("/", "");
 						}
-					CSVMergeUtil.copyFileToDestination(clusterPath, mypath+"data");					
+					CSVMergeUtil.copyFileToDestination(clusterPath, mypath+"data");		
+					f1.createNewFile();
 				}catch(IOException e) {
 					System.out.println("problem occured while creating file for mswcluster");
 					e.printStackTrace();

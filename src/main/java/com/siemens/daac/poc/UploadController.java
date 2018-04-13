@@ -28,6 +28,7 @@ import com.siemens.daac.poc.model.RInput;
 import com.siemens.daac.poc.service.CSVFileProcessorService;
 import com.siemens.daac.poc.service.RManager;
 import com.siemens.daac.poc.service.StorageService;
+import com.siemens.daac.poc.utility.CSVMergeUtil;
 import com.siemens.daac.poc.utility.CSVReaderUtil;
 import com.siemens.daac.poc.utility.CommonUtils;
 import com.siemens.daac.poc.utility.RUtil;
@@ -36,6 +37,8 @@ import com.siemens.daac.poc.utility.RUtil;
 public class UploadController {
 	File file = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
 	private boolean status = false;
+	
+	private boolean isTestClicked = false;
 
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
@@ -54,6 +57,9 @@ public class UploadController {
 	@Value("${user-upload-file-location}")
 	String userInputFileLocation;
 	
+	@Value("${user-upload-test-file-location}")
+	String userUploadedCSVFileLocation;
+
 	@Value("${r-mswcluster-similarity-matrix-folder-location}")
 	String similarityMatrixPath;
 
@@ -75,7 +81,13 @@ public class UploadController {
 			return "redirect:uploadStatus";
 		}
 		try {
-			String UploadedFolderLocation = defaultWorkspace + userInputFileLocation + File.separator;
+			if(isTestClicked) {
+				storageService.archievAllFiles();
+				storageService.deleteOldPreRequesFiles();
+				storageService.init();
+			}
+			isTestClicked =false;
+			String UploadedFolderLocation = defaultWorkspace+"/" + userInputFileLocation + File.separator;
 			String fileName = null;
 			String pattern = Pattern.quote(System.getProperty("file.separator"));
 			String[] str = file.getOriginalFilename().split(pattern);
@@ -83,7 +95,14 @@ public class UploadController {
 				fileName = str[str.length - 1];
 			else
 				fileName = str[0];
-			storageService.store(file, fileName,true);
+			if(!storageService.store(file, fileName,true))
+			{
+				status =false;
+				logger.error("Error Uploading the file");
+				redirectAttributes.addFlashAttribute("message", "Error occurred while uploading the file");
+				redirectAttributes.addFlashAttribute("status", "false");
+				return "redirect:/uploadStatus";
+			}
 
 			// Calling CSVReading Service TO read and extract the data ;
 			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,true)) {
@@ -164,6 +183,7 @@ public class UploadController {
 		status = false;
 		m.addAttribute("trueflood", CSVReaderUtil.trueCount);
 		m.addAttribute("falseflood", CSVReaderUtil.falseCount);
+		
 		return "AlarmHomePage";
 
 	}
@@ -213,7 +233,7 @@ public class UploadController {
 		int cnt = 0;
 		File f = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE);
 		while(!f.exists()) {
-			
+
 		}
 		f.delete();
 		String path = CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location");
@@ -255,17 +275,17 @@ public class UploadController {
 		}
 		if(retStrt.contains(cvsSplitBy))
 			retStrt=retStrt.substring(0, retStrt.length()-1);
-
+		isTestClicked=true;
 		return retStrt;
 
 	}
-	
-	
+
+
 	@GetMapping("/getFileNames")
 	public @ResponseBody String[] getFilesName() {
 		File fileFlag = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
 		while(!fileFlag.exists()) {
-			
+
 		}
 		fileFlag.delete();
 		String[] fileNames = new String[3];
@@ -275,43 +295,60 @@ public class UploadController {
 			if(f.isDirectory()) {
 				File[] files = f.listFiles();
 				for(int i =0;i<files.length;i++) {
+
 					String fName =files[i].getName();
-					fileNames[i]="./data/"+fName;
+					if(fName.endsWith(".csv"))
+						fileNames[i]="./data/"+fName;
 				}
+				storageService.deleteAll(clusterPath);
 			}
 			return fileNames;
-			
+
 		}catch(Exception e) {
 			return null;
 		}
-		
+
 	}
 
 
 	@PostMapping("/test")
 	public @ResponseBody String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 		if (file.isEmpty()) {
-//			alert("Please Select a file to Upload");
+			//			alert("Please Select a file to Upload");
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
-		System.out.println("Test hitt!!!!!!!!!");
-		String fileName = null;
-		String pattern = Pattern.quote(System.getProperty("file.separator"));
-		String[] str = file.getOriginalFilename().split(pattern);
-		if (str.length > 0)
-			fileName = str[str.length - 1];
-		else
-			fileName = str[0];
-		storageService.store(file, fileName ,false);
-
-		// Calling CSVReading Service TO read and extract the data ;
-//			if (csvFileProcessorService.read(UploadedFolderLocation + fileName ,false)) {
-//				will call the RProcesses -
-			callRProcess(defaultWorkspace + "/" + mergedFilePath ,true);
-			callSequenceExecutor(false);
-//			}
-
-		return "<p>Got the result of upload</p>";
+		try {
+			System.out.println("Test hitt!!!!!!!!!");
+			
+			String fileName = null;
+			String pattern = Pattern.quote(System.getProperty("file.separator"));
+			String[] str = file.getOriginalFilename().split(pattern);
+			if (str.length > 0)
+				fileName = str[str.length - 1];
+			else
+				fileName = str[0];
+			if(!storageService.store(file, fileName ,false))
+			{
+				logger.error("The Uploading test file is not uploaded");
+					return null;
+			}
+			if (csvFileProcessorService.read(userUploadedCSVFileLocation+"/" + fileName ,false)) {
+				//				will call the RProcesses -
+				callRProcess(defaultWorkspace + "/" + mergedFilePath ,true);
+				callSequenceExecutor(false);
+			}else {
+				callSequenceExecutor(false);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		File f = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
+		while(!f.exists()) {
+			
+		}
+		f.delete();
+		return CSVReaderUtil.trueCount+","+CSVReaderUtil.falseCount;
 	}
 }

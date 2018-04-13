@@ -103,6 +103,7 @@ public class RCodeRunner {
 				rOutput.setErrorMsg(rResponseObject.asString());
 				rOutput.setStatus(ProjectConstants.FALSE);
 			}
+			rOutput.setRunForTraining(rInput.isRunForTraining());
 			if(rInput.getAlgorithmType().equalsIgnoreCase(ProjectConstants.R_PREDICTION_ALGO) && !rInput.isRunForTraining())
 			{
 				int[] rResponseArr =rFuncCallResponse.asIntegers();

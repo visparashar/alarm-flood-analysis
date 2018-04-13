@@ -15,6 +15,7 @@ public class ROutput implements Serializable {
 	private String transactionId;
 	private String algoType;
 	private Object rResponse;
+	private boolean isRunForTraining;
 	public int getTrueFloodCount() {
 		return trueFloodCount;
 	}
@@ -59,12 +60,20 @@ public class ROutput implements Serializable {
 	public void setrResponse(Object rResponse) {
 		this.rResponse = rResponse;
 	}
+	
+	public boolean isRunForTraining() {
+		return isRunForTraining;
+	}
+	public void setRunForTraining(boolean isRunForTraining) {
+		this.isRunForTraining = isRunForTraining;
+	}
 	@Override
 	public String toString() {
 		return "ROutput [trueFloodCount=" + trueFloodCount + ", falseFloodCount=" + falseFloodCount + ", status="
-				+ status + ", errorMsg=" + errorMsg + ", transactionId=" + transactionId + "]";
+				+ status + ", errorMsg=" + errorMsg + ", transactionId=" + transactionId + ", algoType=" + algoType
+				+ ", rResponse=" + rResponse + ", isRunForTraining=" + isRunForTraining + "]";
 	}
-
+	
 
 
 }

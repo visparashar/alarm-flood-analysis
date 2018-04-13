@@ -104,6 +104,14 @@ public class CSVMergeUtil {
 			if(file.getName().contains(".csv")) {
 				System.out.println("Copying file from "+file.getName().toString()+" >>>>>>>>>>"+toLocation);
 				Files.copy(Paths.get(file.toString()), Paths.get(toLocation).resolve(file.getName().toString()), StandardCopyOption.REPLACE_EXISTING);
+			}else if(file.isDirectory()) {
+				File[] f = file.listFiles();
+				for(File ftemp : f) {
+					System.out.println("Copying file from "+ftemp.getName().toString()+" >>>>>>>>>>"+toLocation);
+					Files.copy(Paths.get(ftemp.toString()), Paths.get(toLocation).resolve(ftemp.getName().toString()), StandardCopyOption.REPLACE_EXISTING);
+				
+				}
+				
 			}
 		}
 		return true;

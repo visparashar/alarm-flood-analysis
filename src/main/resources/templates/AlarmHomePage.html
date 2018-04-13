@@ -110,7 +110,7 @@
 		</div>
 	</nav>
 	<div id="main-container" class="container padding-0">
-	
+
 
 		<div id="messageboxid">
 			<div id="uploadstatus" th:if="${message}">
@@ -119,100 +119,141 @@
 				<hr />
 			</div>
 		</div>
-		<div id ="test-container" class ="container" style="display:none;">
-		<div class="row">
-			<div class ="col-md-6">
-				this is one column
+		<div id="test-container" style="display: none;">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-success">
+						<div class="panel-heading">Test Flood Result</div>
+						<div class="panel-body">
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse1">Uploaded Flood
+											Status</a>
+									</div>
+									<div id="collapse1" class="panel-collapse in">
+										<div id="uploadedtestdatastatus" class="panel-body"></div>
+									</div>
+								</div>
+							</div>
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse2">Cluster</a>
+									</div>
+									<div id="collapse2" class="panel-collapse collapse">
+										<div class="panel-body">Cluster 1</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel-group">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<a data-toggle="collapse" href="#collapse3">Root Cause
+											Analysis</a>
+									</div>
+									<div id="collapse3" class="panel-collapse collapse">
+										<div class="panel-body">rca</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
-			<div class ="col-md-6">
-				this is second column
+		</div>
+		<div id="training-container">
+			<div th:if="${status =='true'}">
+				<div class="row">
+					<div id="leftpanel" class="col-md-12" style="float: left">
+						<!--  Left side panel -->
+						<div class="panel panel-success">
+							<div class="panel-heading">Status Of Uploaded Floods</div>
+							<div class="panel-body">
+								<div id="myDiv">
+									<!-- Plotly chart will be drawn inside this DIV -->
+								</div>
+								<script th:inline="javascript">
+									/*<![CDATA[*/
+									var tf = /*[[${trueflood}]]*/'default';
+									var ff = /*[[${falseflood}]]*/'default';
+
+									var data = [ {
+										values : [ tf, ff ],
+										labels : [ 'True Flood', 'False Flood' ],
+										type : 'pie'
+									} ];
+									var layout = {
+										title : 'Flood Status',
+										showlegend : true,
+										margin: {
+											t: 40, //top margin
+											l: 20, //left margin
+											r: 20, //right margin
+											b: 20 //bottom margin
+										}
+									};
+									
+									Plotly.newPlot('myDiv', data, layout, {
+										displayModeBar : false
+									});
+									
+
+									/*]]>*/
+								</script>
+							</div>
+						</div>
+					</div>
+					<div id="matrix" style="display: none;" class="col-md-8">
+						<!--  Right side panel -->
+						<div class="panel panel-success">
+							<div class="panel-heading">Trained Data Result</div>
+							<div class="panel-body">
+								<ul class="nav nav-tabs">
+									<li class="active"><a data-toggle="tab" href="#sim">Similarity
+											Matrix</a></li>
+									<li><a data-toggle="tab" href="#cluster">Cluster
+											Diagram</a></li>
+								</ul>
+								<div class="tab-content">
+									<div id="sim" class="tab-pane in active">
+										<div id="plotsimilarity">
+											<!-- show the  similarity here  -->
+										</div>
+									</div>
+									<div id="cluster" class="tab-pane">
+										<div class="row">
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster1-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster1"></div>
+												</div>
+											</div>
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster2-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster2"></div>
+												</div>
+											</div>
+											<div class="col-md-4"
+												style="padding-right: 10px; padding-left: 20px">
+												<div class="panel panel-success">
+													<div id="cluster3-header" class="panel-heading"></div>
+													<div class="panel-body" id="cluster3"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div id="training-container">
-		<div th:if="${status =='true'}">
-			<div class="row">
-				<div id="leftpanel" class="col-md-4">
-					<!--  Left side panel -->
-					<div class="panel panel-success">
-						<div class="panel-heading">Status Of Uploaded Floods</div>
-						<div class="panel-body">
-							<div id="myDiv">
-								<!-- Plotly chart will be drawn inside this DIV -->
-							</div>
-							<script th:inline="javascript">
-								/*<![CDATA[*/
-								var tf = /*[[${trueflood}]]*/'default';
-								var ff = /*[[${falseflood}]]*/'default';
-
-								var data = [ {
-									values : [ tf, ff ],
-									labels : [ 'True Flood', 'False Flood' ],
-									type : 'pie'
-								} ];
-								var layout = {
-									title : 'Flood Status',
-									showlegend : true
-								};
-
-								Plotly.newPlot('myDiv', data, layout, {
-									displayModeBar : false
-								});
-
-								/*]]>*/
-							</script>
-						</div>
-					</div>
-				</div>
-				<div id="matrix" style="display: none;" class="col-md-8">
-					<!--  Right side panel -->
-					<div class="panel panel-success">
-						<div class="panel-heading">Trained Data Result</div>
-						<div class="panel-body">
-							<ul class="nav nav-tabs">
-								<li class="active"><a data-toggle="tab" href="#sim">Similarity
-										Matrix</a></li>
-								<li><a data-toggle="tab" href="#cluster">Cluster
-										Diagram</a></li>
-							</ul>
-							<div class="tab-content">
-								<div id="sim" class="tab-pane in active">
-									<div id="plotsimilarity">
-										<!-- show the  similarity here  -->
-									</div>
-								</div>
-								<div id="cluster" class="tab-pane">
-									<div class="row">
-										<div class="col-md-4"
-											style="padding-right: 10px; padding-left: 20px">
-											<div class="panel panel-success">
-												<div id="cluster1-header" class="panel-heading"></div>
-												<div class="panel-body" id="cluster1"></div>
-											</div>
-										</div>
-										<div class="col-md-4"
-											style="padding-right: 10px; padding-left: 20px">
-											<div class="panel panel-success">
-												<div id="cluster2-header" class="panel-heading"></div>
-												<div class="panel-body" id="cluster2"></div>
-											</div>
-										</div>
-										<div class="col-md-4"
-											style="padding-right: 10px; padding-left: 20px">
-											<div class="panel panel-success">
-												<div id="cluster3-header" class="panel-heading"></div>
-												<div class="panel-body" id="cluster3"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-  </div>
- </div>
 </body>
 </html>

@@ -24,6 +24,10 @@ public class CSVFileProcessorService implements FileProcessorService{
 			if(!forTraining) {
 				if(fileNameWithStatusMap.values().contains("notSure")) {
 //					TODO need to write logic for if all the flood are true and for if there is no notSure file
+					return true;
+				}
+				else {
+					return false;
 				}
 			}
 //			TODO : There should be atleast one true and one false

@@ -38,9 +38,7 @@ callRFunction <- function(
 	  return(prefilter_response)
 		
 	}else if (algorithm_to_run == CONST_PREFILTER_ALGO && is_model_need_to_run_or_training_set == 'false'){
-		source(paste0(source_of_other_lib,'/',CONST_PREFILTER_FILENAME))
-		prefilter_response = PrefilterFunc(input_file_path,source_of_other_lib,output_file_path)
-		return(prefilter_response)
+		
 	}
 	
 	if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'true')
@@ -49,9 +47,7 @@ callRFunction <- function(
 		clasturing_response = CalculateMSWMatrix(input_file_path,second_input_for_prefilter,output_file_path)
 		return(clasturing_response)
 	}else if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'false'){
-		source(paste0(source_of_other_lib,'/',CONST_MSW_CLUSTER_FILENAME))
-	  clasturing_response = CalculateMSWMatrix(input_file_path,source_of_other_lib,output_file_path)
-	  return(clasturing_response)
+	
 	}
 	
 	

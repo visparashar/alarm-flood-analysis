@@ -4,6 +4,24 @@ $(document).ready(function () {
 
 		//stop submit the form, we will post it manually.
 		event.preventDefault();
+//		callResizePlolyFun();
+		var col =$("#leftpanel");
+		var originalWidth = col.width();
+		var originalHeight = col.height();
+		 if (col.hasClass("shrunk")) {
+		        col.removeClass("shrunk")
+		            .stop(true)
+		            .animate({width: originalWidth});
+		 } else {
+		        col.addClass("shrunk")
+		            .stop(true, true)
+		            .animate({width: 370}, 100);
+		    }
+		 var update ={
+				 width:320,
+		 		height:originalHeight
+		 };
+		 Plotly.relayout('myDiv',update); 
 		$("#uploadstatus").hide();
 		$("#messageboxid").append(
 				"<div class='well well-lg' >" +
@@ -198,18 +216,23 @@ function processData(allRows) {
 }); */
 
 function uploadTestDataUsingJqueryForm(){
-	alert("hit");
+//	alert("hit");
 //	$("#training-container").slideDown();
 	$('#test-container').show();
 	
-	/*$("#fileinfo").ajaxForm({
+	$("#fileinfo").ajaxForm({
 		success: function(data){
-			alert(data);
-//			
-			$('#result').html(data);
+			 document.getElementById("fileinfo").reset();
+			 var d =data;
+			 var s =d.split(",")
+			 if(s[0] === '1'){
+				 $('#uploadedtestdatastatus').html("<center><b>Status:</b>True Flood</center>");	 
+			 }else{
+				 $('#uploadedtestdatastatus').html("<center><b>Status:</b>False Flood, Please Upload new File for test </center>");	 
+			 }
 		},
 		dataType:"text"
-	}).submit();*/
+	}).submit();
 	
 }
 

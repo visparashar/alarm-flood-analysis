@@ -19,10 +19,10 @@ public class AlarmFoodAnalysisApplication implements CommandLineRunner {
 
 	@Autowired
 	RManager manager;
-	
+
 	@Resource
 	StorageService storeService;
-	
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlarmFoodAnalysisApplication.class, args);
@@ -31,13 +31,17 @@ public class AlarmFoodAnalysisApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-			storeService.deleteAll();
-			storeService.init();
-			storeService.deleteOldPreRequesFiles();
-			
+		storeService.archievAllFiles();
+//		storeService.deleteAllFiles();
+//		storeService.deleteAll(null);
+		storeService.deleteOldPreRequesFiles();
+		storeService.init();
+
+
+
 	}
-	
 
 
-	
+
+
 }
