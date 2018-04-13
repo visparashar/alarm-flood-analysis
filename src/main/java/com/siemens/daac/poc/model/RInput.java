@@ -19,6 +19,12 @@ public class RInput implements Serializable {
 	private boolean isRunForTraining;
 	private String rWorkSpacePath;
 	private String secondInputFilePath;
+	private String patternMiningFilePath;
+	private String clusterResultFilePath;
+	private String mergedResultFilePath;
+	private String testRcaFilePath;
+	private String frequencyCountFilePath;
+	private String otherRequiredPath;
 	
 	
 	public RInput() {
@@ -65,9 +71,6 @@ public class RInput implements Serializable {
 		this.isRunForTraining = isRunForTraining;
 	}
 	
-	
-	
-
 	public String getrWorkSpacePath() {
 		return rWorkSpacePath;
 	}
@@ -76,9 +79,6 @@ public class RInput implements Serializable {
 		this.rWorkSpacePath = rWorkSpacePath;
 	}
 
-	
-	
-	
 	public String getSecondInputFilePath() {
 		return secondInputFilePath;
 	}
@@ -87,13 +87,67 @@ public class RInput implements Serializable {
 		this.secondInputFilePath = secondInputFilePath;
 	}
 
+	public String getPatternMiningFilePath() {
+		return patternMiningFilePath;
+	}
+
+	public void setPatternMiningFilePath(String patternMiningFilePath) {
+		this.patternMiningFilePath = patternMiningFilePath;
+	}
+
+	public String getClusterResultFilePath() {
+		return clusterResultFilePath;
+	}
+
+	public void setClusterResultFilePath(String clusterResultFilePath) {
+		this.clusterResultFilePath = clusterResultFilePath;
+	}
+
+	public String getMergedResultFilePath() {
+		return mergedResultFilePath;
+	}
+
+	public void setMergedResultFilePath(String mergedResultFilePath) {
+		this.mergedResultFilePath = mergedResultFilePath;
+	}
+
+	public String getTestRcaFilePath() {
+		return testRcaFilePath;
+	}
+
+	public void setTestRcaFilePath(String testRcaFilePath) {
+		this.testRcaFilePath = testRcaFilePath;
+	}
+
+	public String getFrequencyCountFilePath() {
+		return frequencyCountFilePath;
+	}
+
+	public void setFrequencyCountFilePath(String frequencyCountFilePath) {
+		this.frequencyCountFilePath = frequencyCountFilePath;
+	}
+	
+	
+	public String getOtherRequiredPath() {
+		return otherRequiredPath;
+	}
+
+	public void setOtherRequiredPath(String otherRequiredPath) {
+		this.otherRequiredPath = otherRequiredPath;
+	}
+
 	@Override
 	public String toString() {
 		return "RInput [transactionId=" + transactionId + ", inputFilePath=" + inputFilePath + ", algorithmType="
 				+ algorithmType + ", outputFilePath=" + outputFilePath + ", isRunForTraining=" + isRunForTraining
-				+ ", rWorkSpacePath=" + rWorkSpacePath + ", secondInputFilePath=" + secondInputFilePath + "]";
+				+ ", rWorkSpacePath=" + rWorkSpacePath + ", secondInputFilePath=" + secondInputFilePath
+				+ ", patternMiningFilePath=" + patternMiningFilePath + ", clusterResultFilePath="
+				+ clusterResultFilePath + ", mergedResultFilePath=" + mergedResultFilePath + ", testRcaFilePath="
+				+ testRcaFilePath + ", frequencyCountFilePath=" + frequencyCountFilePath + ", otherRequiredPath="
+				+ otherRequiredPath + "]";
 	}
 
+	
 	
 	
 	

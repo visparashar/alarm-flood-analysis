@@ -31,7 +31,23 @@ public class RUtil {
 			similarityMatrxiPath.mkdirs();
 		File clusterPath = new File(CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location")+"/clusters");
 		if(!clusterPath.exists()){
-			return clusterPath.mkdirs();
+			clusterPath.mkdirs();
+		}
+		File patternMiningFilePath = new File(CommonUtils.readProperty("r-frequencycount-patternmining-folder-location"));
+		if(!patternMiningFilePath.exists()){
+			patternMiningFilePath.mkdirs();
+		}
+		File mergeResultFilePath = new File(CommonUtils.readProperty("r-frequencycount-mergedresult-folder-location"));
+		if(!mergeResultFilePath.exists()){
+			mergeResultFilePath.mkdirs();
+		}
+		File testRcaInputFilePath = new File(CommonUtils.readProperty("r-testrca-input-folder-location"));
+		if(!testRcaInputFilePath.exists()){
+			testRcaInputFilePath.mkdirs();
+		}
+		File frequencyCountOutputPath = new File(CommonUtils.readProperty("r-frequencycount-output-folder-location"));
+		if(!frequencyCountOutputPath.exists()){
+			return frequencyCountOutputPath.mkdirs();
 		}
 		return true;
 		
@@ -64,6 +80,27 @@ public class RUtil {
 				String rWorkspacePath = CommonUtils.getRWorkspacePath();
 				rWorkspacePath =rWorkspacePath.replaceAll("\\\\", "/");
 				rinput.setrWorkSpacePath(rWorkspacePath);
+				
+//				added for frequency pattern mining
+				String patternMiningPath = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-patternmining-folder-location");
+				patternMiningPath = patternMiningPath.replaceAll("\\\\", "/");
+				rinput.setPatternMiningFilePath(patternMiningPath);
+			
+				String mergedresultFilePath = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-mergedresult-folder-location");
+				mergedresultFilePath = mergedresultFilePath.replaceAll("\\\\", "/");
+				rinput.setMergedResultFilePath(mergedresultFilePath);
+			
+				String clusterResultFilePath = defaultWorkspace+"/"+CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location")+"/clusters";
+				clusterResultFilePath = clusterResultFilePath.replaceAll("\\\\", "/");
+				rinput.setClusterResultFilePath(clusterResultFilePath);
+				
+				String testRcaInputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-testrca-input-folder-location");
+				testRcaInputFile = testRcaInputFile.replaceAll("\\\\", "/");
+				rinput.setTestRcaFilePath(testRcaInputFile);
+				
+				String frequencyCountoutputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-output-folder-location");
+				frequencyCountoutputFile = frequencyCountoutputFile.replaceAll("\\\\", "/");
+				rinput.setFrequencyCountFilePath(frequencyCountoutputFile);
 				return rinput;
 			}
 			case ProjectConstants.CONST_MSW_CLUSTER_ALSO :{
@@ -83,8 +120,29 @@ public class RUtil {
 				String rWorkspace = CommonUtils.getRWorkspacePath();
 				rWorkspace =rWorkspace.replaceAll("\\\\", "/");
 				rinput.setrWorkSpacePath(rWorkspace);
+				String patternMiningPath = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-patternmining-folder-location");
+				patternMiningPath = patternMiningPath.replaceAll("\\\\", "/");
+				rinput.setPatternMiningFilePath(patternMiningPath);
+			
+				String mergedresultFilePath = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-mergedresult-folder-location");
+				mergedresultFilePath = mergedresultFilePath.replaceAll("\\\\", "/");
+				rinput.setMergedResultFilePath(mergedresultFilePath);
+			
+				String clusterResultFilePath = defaultWorkspace+"/"+CommonUtils.readProperty("r-mswcluster-similarity-matrix-folder-location")+"/clusters";
+				clusterResultFilePath = clusterResultFilePath.replaceAll("\\\\", "/");
+				rinput.setClusterResultFilePath(clusterResultFilePath);
+				
+				String testRcaInputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-testrca-input-folder-location");
+				testRcaInputFile = testRcaInputFile.replaceAll("\\\\", "/");
+				rinput.setTestRcaFilePath(testRcaInputFile);
+				
+				String frequencyCountoutputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-frequencycount-output-folder-location");
+				frequencyCountoutputFile = frequencyCountoutputFile.replaceAll("\\\\", "/");
+				rinput.setFrequencyCountFilePath(frequencyCountoutputFile);
+				String sourceOfFrequencyFile = CommonUtils.getRWorkspacePath()+"/"+ProjectConstants.FREQUENCY_COUNT_RFILE_PATH;
+				sourceOfFrequencyFile =sourceOfFrequencyFile.replaceAll("\\\\", "/");
+				rinput.setOtherRequiredPath(sourceOfFrequencyFile);
 				return rinput;
-
 			}
 			default:{
 				System.out.println("algotype is invalid");

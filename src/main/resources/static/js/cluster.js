@@ -93,19 +93,7 @@ function plotCluster(data){
 		.on("mouseout",function(){return tooltip.style("visibility","hidden");});
 
 		//format the text for each bubble
-		bubbles.append("text").attr("x", function(d) {
-			return d.x;
-		}).attr("y", function(d) {
-			return d.y + 5;
-		}).attr("text-anchor", "middle").text(function(d) {
-//			var str =d["a"]+"-"+d["b"]
-			
-			return d["a"];
-		}).style({
-			"fill" : "white",
-			"font-family" : "Helvetica Neue, Helvetica, Arial, san-serif",
-			"font-size" : "12px"
-		});
+	
 	})
 
 //	cluster 2
@@ -168,17 +156,20 @@ var tooltip2 =d3.select("#cluster2")
 		.on("mouseout",function(){return tooltip2.style("visibility","hidden");});
 
 		//format the text for each bubble
-		bubbles.append("text").attr("x", function(d) {
+		/*bubbles.append("text").attr("x", function(d) {
 			return d.x;
 		}).attr("y", function(d) {
 			return d.y + 5;
 		}).attr("text-anchor", "middle").text(function(d) {
-			return d["a"];
+			var text = d["a"];
+			var length=7;
+			var trimmed = text.substring(0,length);
+			return trimmed;
 		}).style({
 			"fill" : "white",
 			"font-family" : "Helvetica Neue, Helvetica, Arial, san-serif",
 			"font-size" : "12px"
-		});
+		});*/
 	})
 
 //	cluster 3 
@@ -238,7 +229,7 @@ var tooltip2 =d3.select("#cluster2")
 		})
 		.on("mouseout",function(){return tooltip3.style("visibility","hidden");});
 
-		//format the text for each bubble
+	/*	//format the text for each bubble
 		bubbles.append("text").attr("x", function(d) {
 			return d.x;
 		}).attr("y", function(d) {
@@ -249,6 +240,6 @@ var tooltip2 =d3.select("#cluster2")
 			"fill" : "white",
 			"font-family" : "Helvetica Neue, Helvetica, Arial, san-serif",
 			"font-size" : "12px"
-		});
+		});*/
 	})
 }

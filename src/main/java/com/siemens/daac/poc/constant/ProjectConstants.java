@@ -9,6 +9,9 @@ public class ProjectConstants {
 	public static final String R_PREDICTION_ALGO="prediction";
 	public static final String CONST_PREFILTER_ALGO="prefilter";
 	public static final String CONST_MSW_CLUSTER_ALSO="cluster";
+	public static final String CONST_FREQUENCY_COUNT_ALGO="frequencyalgo";
+	
+	public static final String FREQUENCY_COUNT_RFILE_PATH="freq_ptrn_mining";
 	
 	
 	public static final String R_WORKSPACE_FOLDER_NAME="rWorkspace";

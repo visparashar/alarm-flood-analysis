@@ -1,7 +1,8 @@
 
 callRFunction <- function(
 		input_file_path ,output_file_path,source_of_other_lib,algorithm_to_run,
-  		is_model_need_to_run_or_training_set,rworkspace_path , second_input_for_prefilter){
+  		is_model_need_to_run_or_training_set,rworkspace_path , second_input_for_prefilter,pattern_mining_file_path
+		,cluster_result_file_path,merged_result_file_path,test_rca_file_path,frequency_count_file_path,other_path_if_required){
 	getwd()
   setwd(rworkspace_path)
   source('filename_constants.R')
@@ -45,7 +46,10 @@ callRFunction <- function(
 	{
 		source(paste0(source_of_other_lib,'/',CONST_MSW_CLUSTER_FILENAME))
 		clasturing_response = CalculateMSWMatrix(input_file_path,second_input_for_prefilter,output_file_path)
-		return(clasturing_response)
+		source(paste0(other_path_if_required,'/',CONST_FREQ_PTRN_MINING_FILENAME))
+		frequentpattern = CalculateFrequentPattern(second_input_for_prefilter,pattern_mining_file_path,cluster_result_file_path,
+		                                           merged_result_file_path,test_rca_file_path,frequency_count_file_path)
+		return(frequentpattern)
 	}else if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'false'){
 	
 	}

@@ -15,13 +15,17 @@ $(document).ready(function () {
 		 } else {
 		        col.addClass("shrunk")
 		            .stop(true, true)
-		            .animate({width: 370}, 100);
+		            .animate({width: 390}, 1000);
 		    }
 		 var update ={
-				 width:320,
+				 width:340,
 		 		height:originalHeight
 		 };
-		 Plotly.relayout('myDiv',update); 
+		 Plotly.relayout('myDiv',update);
+		 
+		/* $('#rightpanelbody').css({
+			 "width":originalHeight
+		 })*/
 		$("#uploadstatus").hide();
 		$("#messageboxid").append(
 				"<div class='well well-lg' >" +
@@ -142,7 +146,10 @@ function processData(allRows) {
 	} ];
 	var layout = {
 			title : 'Similarity Matrix',
-			showlegend : true
+			showlegend : true,
+			yaxis:{
+				ticklen:10
+			}
 	};
 
 	Plotly.newPlot('plotsimilarity', data, layout, {

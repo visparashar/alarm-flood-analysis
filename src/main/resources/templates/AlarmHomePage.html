@@ -59,6 +59,17 @@
 	function onTrain() {
 		document.getElementById('train').style.display = 'block';
 	}
+	
+	
+		$('#rcabtn1').on('click',function(ev){
+			ev.preventDefault();
+			alert('this');
+			$("body").popover({selector: "#rcabtn1"});
+		});
+			
+		
+		
+	
 
 	/*]]>*/
 </script>
@@ -68,7 +79,7 @@
 	<div class="container-fluid padding-0">
 		<div class="row padding-0">
 			<div class="col-md-4" align="left">
-				<img src="/images/logo_siemens.jpg" style="width: 50%;" />
+				<a th:href="@{/flood}"><img src="/images/logo_siemens.jpg" style="width: 50%;" /></a>
 			</div>
 			<div class="col-md-4">
 				<h2>Alarm Flood Analysis</h2>
@@ -90,18 +101,18 @@
 						<input type="file" name="file" accept=".zip" />
 					</div>
 					<div class="col-sm-6">
-						<input type="submit" class="btn btn-success btn-sm" value="Submit" />
+						<input type="submit" class="btn btn-success btn-sm" value="Upload Train Data" />
 					</div>
 				</form>
 			</div>
 			<div th:if="${status =='true'}" class="col-md-4">
 				<div class="row">
 					<div class="col-md-6">
-						<B>Click Here To Train Data</B>
+						<B>Time to Train System </B>
 					</div>
 					<div class="col-md-6">
 						<form id="train-form">
-							<input type="submit" value="Train Data" id="train-btn"
+							<input type="submit" value="Train System" id="train-btn"
 								class="btn btn-success btn-sm" onClick="runRAndShowMatrix()" />
 						</form>
 					</div>
@@ -209,7 +220,7 @@
 						<!--  Right side panel -->
 						<div class="panel panel-success">
 							<div class="panel-heading">Trained Data Result</div>
-							<div class="panel-body">
+							<div id="rightpanelbody" class="panel-body" style="min-height:570px; max-height: 770px">
 								<ul class="nav nav-tabs">
 									<li class="active"><a data-toggle="tab" href="#sim">Similarity
 											Matrix</a></li>
@@ -229,6 +240,7 @@
 												<div class="panel panel-success">
 													<div id="cluster1-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster1"></div>
+													<div class="panel-footer"><button class="btn btn-success btn-md" id="rcabtn1" data-placement="bottom" title="Root Cause of Cluster 1" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 1">Click For RCA 1</button></div>
 												</div>
 											</div>
 											<div class="col-md-4"
@@ -236,6 +248,7 @@
 												<div class="panel panel-success">
 													<div id="cluster2-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster2"></div>
+												<div class="panel-footer"><a href="#rca"  data-placement="bottom" title="Root Cause of Cluster 2" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 2">Click For RCA 2</a></div>
 												</div>
 											</div>
 											<div class="col-md-4"
@@ -243,6 +256,7 @@
 												<div class="panel panel-success">
 													<div id="cluster3-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster3"></div>
+												<div class="panel-footer"><a href="#rca"  data-placement="bottom" title="Root Cause of Cluster 1" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 2">Click For RCA 3</a></div>
 												</div>
 											</div>
 										</div>
