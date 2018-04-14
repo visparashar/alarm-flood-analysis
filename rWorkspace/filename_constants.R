@@ -23,6 +23,7 @@ CONST_NAIVE_BAYES="NaiveBayes.R"
 CONST_PREFILTER_FILENAME="Prefilter.R"
 CONST_MSW_CLUSTER_FILENAME="MswAlgorithm.R"	
 CONST_FREQ_PTRN_MINING_FILENAME="Frequency_Ptrn_Mining.R"
+CONST_TEST_RCA_FILENAME="RCA.R"
 
 
 # Algorithm Names
@@ -30,6 +31,7 @@ CONST_PREDICTION_ALOG ="prediction"
 CONST_PREFILTER_ALGO="prefilter"
 CONST_MSW_CLUSTER_ALSO="cluster"
 CONST_FREQUENCY_COUNT_ALGO="frequencyalgo"
+CONST_TEST_RCA_ALGO="test_rca"
 
 
 # different path location of algorithms

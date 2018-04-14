@@ -19,6 +19,11 @@ compare_to_cluster <-
     similar_file = ""
     
     for (j in 1:CONST_CLUSTER_LENGTH) {
+      print(paste0(CONST_CLUSTER, j))
+      
+      temp= file.size(paste0(CONST_CLUSTER, j,'.txt'))
+      print(temp)
+      if(temp != 0){
       similarity = jaccard_similarity(corpus[[paste0(CONST_CLUSTER, j)]], corpus[[test_filename]])
       similarity_frame = as.data.frame(similarity)
       if (maxm < similarity)
@@ -31,7 +36,7 @@ compare_to_cluster <-
         colnames(res_df)[CONST_CLUSTER_SECOND_COL] <-
           CONST_SIMILARITY
       }
-      
+      }
     }
     #writing recommendation result to a file
     setwd(recommendation_file_path)
@@ -42,6 +47,7 @@ compare_to_cluster <-
       quote = FALSE,
       sep = ","
     )
+    return(res_df)
   }
 
 #main function for root cause analysis
@@ -75,15 +81,15 @@ RootCauseAnalysis <-
     )
     
     #compare  test file with cluster files
-    compare_to_cluster(textform_test_data_path,
+    return(compare_to_cluster(textform_test_data_path,
                        recommendation_file_path,
-                       test_filename)
+                       test_filename))
     
     
   }
 
-RootCauseAnalysis(
-  "C:/Users/Khushboo/Documents/test_rca/testdata",
-  "C:/Users/Khushboo/Documents/test_rca/testdata_text",
-  "C:/Users/Khushboo/Documents/test_rca/recommendation/"
-)
+# RootCauseAnalysis(
+#   "C:/Users/Khushboo/Documents/test_rca/testdata", -where uploaded the test file
+#   "C:/Users/Khushboo/Documents/test_rca/testdata_text", - testrca input folder
+#   "C:/Users/Khushboo/Documents/test_rca/recommendation/" - new file for recommendation
+# )

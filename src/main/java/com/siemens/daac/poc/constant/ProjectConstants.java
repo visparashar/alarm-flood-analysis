@@ -1,5 +1,7 @@
 package com.siemens.daac.poc.constant;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class ProjectConstants {
 
 
@@ -12,6 +14,8 @@ public class ProjectConstants {
 	public static final String CONST_FREQUENCY_COUNT_ALGO="frequencyalgo";
 	
 	public static final String FREQUENCY_COUNT_RFILE_PATH="freq_ptrn_mining";
+	
+	public static final String CONST_TEST_RCA_ALGO="test_rca";
 	
 	
 	public static final String R_WORKSPACE_FOLDER_NAME="rWorkspace";
@@ -38,9 +42,15 @@ public class ProjectConstants {
 	public static final String FILE_FLAG_FOR_PREDICTION_DONE="Check_For_R_Call_Get_Completed.txt";
 	public static final String FILE_FLAG_FOR_MSW_DONE="check_for_mswcluster_complete.txt";
 	public static final String FILE_FLAG_FOR_MSW_DONE_ONUI="check_for_mswcluster_created.txt";
+	public static final String FILE_FLAF_FOR_CLUSTERRECO_DONE="check_for_cluster_reco_done.txt";
+	public static final String FILE_FLAF_FOR_CLUSTERRECO_DONE1="check_for_cluster_reco_done1.txt";
+	public static final String FILE_FLAF_FOR_CLUSTERRECO_DONE2="check_for_cluster_reco_done2.txt";
+	public static final String FILE_FLAG_FOR_TEST_RCA_DONE ="check_for_test_rca_done.txt";
 	
 //  important
 	public static boolean isRequiredToRunPrediction = false;
+	
+	public static ConcurrentHashMap<String ,String> recoTrainingClusterWiseMap = new ConcurrentHashMap<String,String>();
 
 
 

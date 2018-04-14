@@ -28,7 +28,6 @@ public class RCodeRunner {
 		ROutput rOutput = new ROutput();
 		try {
 			if(checkInput(rinput)) {
-				//				 TODO: added condtition for output path
 				if(logger.isDebugEnabled())
 					logger.debug("[RCodeRunner] Creating RConnection ");
 
@@ -71,12 +70,12 @@ public class RCodeRunner {
 			generalRCodeRunner =generalRCodeRunner.replaceAll("\\\\", "/");
 			if(logger.isDebugEnabled()){
 				logger.debug("--inputFilePath : "+rInput.getInputFilePath());
-				logger.debug("predication Algo Path "+generalRCodeRunner);
+				logger.debug("Algo Path "+generalRCodeRunner);
 			}
 			if(logger.isDebugEnabled())
 				logger.info("Calling the Source function of R ");
 			String sourceRStatement ="source('"+generalRCodeRunner+"')";
-
+			logger.info("Running Source Command as "+sourceRStatement);
 			//					calling the source using try eval
 			REXP rResponseObject = connector.parseAndEval(
 					"try(eval("+sourceRStatement+"),silent=TRUE)");
@@ -84,6 +83,7 @@ public class RCodeRunner {
 				logger.error("R Serve Eval Exception : "+rResponseObject);
 			}
 			String algoPath =getAlgoPath(rInput.getAlgorithmType());
+			logger.info("Running Algo ----------- "+algoPath);
 			if(algoPath.equals("notFound")) {
 				rOutput.setStatus(ProjectConstants.FALSE);
 				rOutput.setErrorMsg("The Algotype defined is invalid");
@@ -160,6 +160,9 @@ public class RCodeRunner {
 		}
 		case ProjectConstants.CONST_MSW_CLUSTER_ALSO :{
 			return "/msw_cluster";
+		}
+		case ProjectConstants.CONST_TEST_RCA_ALGO :{
+			return "/test_rca";
 		}
 
 		default:{

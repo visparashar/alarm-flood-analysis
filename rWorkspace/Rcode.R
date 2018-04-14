@@ -50,8 +50,10 @@ callRFunction <- function(
 		frequentpattern = CalculateFrequentPattern(second_input_for_prefilter,pattern_mining_file_path,cluster_result_file_path,
 		                                           merged_result_file_path,test_rca_file_path,frequency_count_file_path)
 		return(frequentpattern)
-	}else if(algorithm_to_run == CONST_MSW_CLUSTER_ALSO && is_model_need_to_run_or_training_set == 'false'){
-	
+	}else if(algorithm_to_run == CONST_TEST_RCA_ALGO && is_model_need_to_run_or_training_set == 'false'){
+	  source(paste0(source_of_other_lib,'/',CONST_TEST_RCA_FILENAME))
+	 recommendation = RootCauseAnalysis(input_file_path,test_rca_file_path,output_file_path)
+	 return(recommendation)
 	}
 	
 	

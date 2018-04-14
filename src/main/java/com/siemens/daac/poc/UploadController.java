@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,7 +39,7 @@ import com.siemens.daac.poc.utility.RUtil;
 public class UploadController {
 	File file = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
 	private boolean status = false;
-	
+
 	private boolean isTestClicked = false;
 
 	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
@@ -56,7 +58,7 @@ public class UploadController {
 
 	@Value("${user-upload-file-location}")
 	String userInputFileLocation;
-	
+
 	@Value("${user-upload-test-file-location}")
 	String userUploadedCSVFileLocation;
 
@@ -87,6 +89,9 @@ public class UploadController {
 				storageService.init();
 			}
 			isTestClicked =false;
+			File tempFlag = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
+			if(tempFlag.exists())
+				tempFlag.delete();
 			String UploadedFolderLocation = defaultWorkspace+"/" + userInputFileLocation + File.separator;
 			String fileName = null;
 			String pattern = Pattern.quote(System.getProperty("file.separator"));
@@ -116,6 +121,7 @@ public class UploadController {
 					logger.info("there are some notsure files in uploaded zip , calling prediction also");
 					callRProcess(defaultWorkspace + "/" + trainingSetInitialFilePath ,false);
 					status =true;
+					ProjectConstants.isRequiredToRunPrediction=false;
 				}
 			} else {
 				status =false;
@@ -183,7 +189,7 @@ public class UploadController {
 		status = false;
 		m.addAttribute("trueflood", CSVReaderUtil.trueCount);
 		m.addAttribute("falseflood", CSVReaderUtil.falseCount);
-		
+
 		return "AlarmHomePage";
 
 	}
@@ -213,7 +219,10 @@ public class UploadController {
 						// call for mswCluster
 						rinput = null;
 						if (RUtil.doMSWClusterPrerequistes()) {
-							rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_MSW_CLUSTER_ALSO, isTrainingRun);
+							if(isTrainingRun)
+								rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_MSW_CLUSTER_ALSO, isTrainingRun);
+							else
+								rinput = RUtil.prepareRInputForAlgo(ProjectConstants.CONST_TEST_RCA_ALGO, isTrainingRun);
 							rManager.sendToQueueForRExecution(rinput);
 						}
 					}
@@ -313,10 +322,12 @@ public class UploadController {
 
 	@PostMapping("/test")
 	public @ResponseBody String uploadTrainData(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+		
+		boolean flag =false;
 		if (file.isEmpty()) {
-			//			alert("Please Select a file to Upload");
+		
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
-			return "redirect:uploadStatus";
+			return CSVReaderUtil.trueCount+","+CSVReaderUtil.falseCount;
 		}
 		try {
 			System.out.println("Test hitt!!!!!!!!!");
@@ -331,24 +342,138 @@ public class UploadController {
 			if(!storageService.store(file, fileName ,false))
 			{
 				logger.error("The Uploading test file is not uploaded");
-					return null;
+				return null;
 			}
 			if (csvFileProcessorService.read(userUploadedCSVFileLocation+"/" + fileName ,false)) {
 				//				will call the RProcesses -
-				callRProcess(defaultWorkspace + "/" + mergedFilePath ,true);
+				if(ProjectConstants.isRequiredToRunPrediction) {
+					callRProcess(defaultWorkspace + "/" + mergedFilePath ,true);
+					ProjectConstants.isRequiredToRunPrediction=false;
+					flag=true;
+				}
 				callSequenceExecutor(false);
 			}else {
-				callSequenceExecutor(false);
+				return CSVReaderUtil.trueCount+","+CSVReaderUtil.falseCount;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(flag) {
 		File f = new File(ProjectConstants.FILE_FLAG_FOR_PREDICTION_DONE);
 		while(!f.exists()) {
-			
+
 		}
 		f.delete();
+		}
 		return CSVReaderUtil.trueCount+","+CSVReaderUtil.falseCount;
 	}
+
+
+	@GetMapping("/getPostCsvData")
+	public @ResponseBody String getCSVData(@RequestParam String path , @RequestParam String fileFlag) {
+
+		int cnt = 0;
+		File f = new File(fileFlag);
+		if(!f.exists()) {
+			if(ProjectConstants.recoTrainingClusterWiseMap.containsKey(path))
+				return ProjectConstants.recoTrainingClusterWiseMap.get(path);
+		}
+		while(!f.exists()) {
+
+		}
+		f.delete();
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+		String retStrt="";
+		String separator="#~#";
+
+		try {
+
+			br = new BufferedReader(new FileReader(path));
+			while ((line = br.readLine()) != null) {
+				//				if (cnt != 0) {
+				// use comma as separator
+				String[] recommendationRow = line.split(cvsSplitBy);
+				retStrt=retStrt+recommendationRow[0]+separator+recommendationRow[1]+cvsSplitBy;
+
+				//				}
+				cnt++;
+
+			}
+			cnt=0;
+
+		} catch (FileNotFoundException e) {
+			logger.error("FileNotFoundException in method getCSVData :"+e);
+		} catch (IOException e) {
+			logger.error("IOException in method getCSVData :"+e);
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error("error while closing bufferReader in method getCSVData" +e);
+				}
+			}
+		}
+		if(retStrt.contains(cvsSplitBy))
+			retStrt=retStrt.substring(0, retStrt.length()-1);
+		ProjectConstants.recoTrainingClusterWiseMap.put(path, retStrt);
+		return retStrt;
+	}
+
+	@GetMapping("/getRecoCluster")
+	public @ResponseBody String getRecoClusterAndSimilarityIndex(@RequestParam String path , @RequestParam String fileFlag) {
+
+		int cnt = 0;
+		File f = new File(fileFlag);
+//		if(!f.exists()) {
+//			if(ProjectConstants.recoTrainingClusterWiseMap.containsKey(path))
+//				return ProjectConstants.recoTrainingClusterWiseMap.get(path);
+//		}
+		while(!f.exists()) {
+
+		}
+		f.delete();
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+		String retStrt="";
+		String separator="#~#";
+
+		try {
+
+			br = new BufferedReader(new FileReader(path));
+			while ((line = br.readLine()) != null) {
+								if (cnt != 0) {
+				// use comma as separator
+				String[] recommendationRow = line.split(cvsSplitBy);
+				retStrt=retStrt+recommendationRow[0]+separator+recommendationRow[1]+cvsSplitBy;
+
+								}
+				cnt++;
+
+			}
+			cnt=0;
+
+		} catch (FileNotFoundException e) {
+			logger.error("FileNotFoundException in method getRecoClusterAndSimilarityIndex :"+e);
+		} catch (IOException e) {
+			logger.error("IOException in method getRecoClusterAndSimilarityIndex :"+e);
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error("error while closing bufferReader in method getRecoClusterAndSimilarityIndex" +e);
+				}
+			}
+		}
+		if(retStrt.contains(cvsSplitBy))
+			retStrt=retStrt.substring(0, retStrt.length()-1);
+//		ProjectConstants.recoTrainingClusterWiseMap.put(path, retStrt);
+		return retStrt;
+	}
+
 }

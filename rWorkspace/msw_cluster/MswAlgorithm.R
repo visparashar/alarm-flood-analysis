@@ -65,7 +65,7 @@ CalculateMSWMatrix <-  function(input_file_path ,
 	count=0
 	lapply(names(out), function(x) {
 	count =count+1
-	write.table(out[[x]],file=paste0(clusterpath,"cluster",'_',count,'_',x,".csv"),quote = FALSE,row.names = FALSE,sep=",")});
+	write.table(out[[x]],file=paste0(clusterpath,"cluster",'_',count,'~~',x,'~~.csv'),quote = FALSE,row.names = FALSE,sep=",")});
 	return(out)
 }
 

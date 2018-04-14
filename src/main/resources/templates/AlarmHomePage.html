@@ -11,6 +11,8 @@
 <script src="js/plotly-latest.min.js"></script>
 <script src="js/d3.min.js"></script>
 <script type="text/javascript" src="js/cluster.js"></script>
+<script type="text/javascript" src="js/rcacluster.js"></script>
+<script type="text/javascript" src="js/busyindicator.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 
 </head>
@@ -61,16 +63,6 @@
 	}
 	
 	
-		$('#rcabtn1').on('click',function(ev){
-			ev.preventDefault();
-			alert('this');
-			$("body").popover({selector: "#rcabtn1"});
-		});
-			
-		
-		
-	
-
 	/*]]>*/
 </script>
 
@@ -150,10 +142,10 @@
 							<div class="panel-group">
 								<div class="panel panel-info">
 									<div class="panel-heading">
-										<a data-toggle="collapse" href="#collapse2">Cluster</a>
+										<a data-toggle="collapse" href="#collapse2">Cluster, Flood Belong</a>
 									</div>
 									<div id="collapse2" class="panel-collapse collapse">
-										<div class="panel-body">Cluster 1</div>
+										<div id="testrcacluster" class="panel-body" style="max-height: 10;"></div>
 									</div>
 								</div>
 							</div>
@@ -164,7 +156,7 @@
 											Analysis</a>
 									</div>
 									<div id="collapse3" class="panel-collapse collapse">
-										<div class="panel-body">rca</div>
+										<div class="panel-body" id ="testrcsdiv"></div>
 									</div>
 								</div>
 							</div>
@@ -219,6 +211,7 @@
 					<div id="matrix" style="display: none;" class="col-md-8">
 						<!--  Right side panel -->
 						<div class="panel panel-success">
+						
 							<div class="panel-heading">Trained Data Result</div>
 							<div id="rightpanelbody" class="panel-body" style="min-height:570px; max-height: 770px">
 								<ul class="nav nav-tabs">
@@ -229,36 +222,54 @@
 								</ul>
 								<div class="tab-content">
 									<div id="sim" class="tab-pane in active">
+									<div id="loading"  ><img src="/images/loading-filter-ajax.gif" /></div>
 										<div id="plotsimilarity">
 											<!-- show the  similarity here  -->
+											
+											
 										</div>
 									</div>
 									<div id="cluster" class="tab-pane">
 										<div class="row">
-											<div class="col-md-4"
+											<div id="cluster1parentdiv" class="col-md-4"
 												style="padding-right: 10px; padding-left: 20px">
 												<div class="panel panel-success">
 													<div id="cluster1-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster1"></div>
-													<div class="panel-footer"><button class="btn btn-success btn-md" id="rcabtn1" data-placement="bottom" title="Root Cause of Cluster 1" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 1">Click For RCA 1</button></div>
+													<div class="panel-footer"><button class="btn btn-success" onClick="onRCA1()">Root Cause</button></div>
 												</div>
 											</div>
-											<div class="col-md-4"
+											<div id="cluster2parentdiv" class="col-md-4"
 												style="padding-right: 10px; padding-left: 20px">
 												<div class="panel panel-success">
 													<div id="cluster2-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster2"></div>
-												<div class="panel-footer"><a href="#rca"  data-placement="bottom" title="Root Cause of Cluster 2" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 2">Click For RCA 2</a></div>
+												<div class="panel-footer"><button class="btn btn-success" onClick="onRCA2()">Root Cause</button></div>
 												</div>
 											</div>
-											<div class="col-md-4"
+											<div id="cluster3parentdiv" class="col-md-4"
 												style="padding-right: 10px; padding-left: 20px">
 												<div class="panel panel-success">
 													<div id="cluster3-header" class="panel-heading"></div>
 													<div class="panel-body" id="cluster3"></div>
-												<div class="panel-footer"><a href="#rca"  data-placement="bottom" title="Root Cause of Cluster 1" data-toggle="popover" data-trigger="focus" data-content="RCA OF CLUSTER 2">Click For RCA 3</a></div>
+												<div class="panel-footer"><button class="btn btn-success" onClick="onRCA3()">Root Cause</button></div>
 												</div>
 											</div>
+										</div>
+										<div class="row" id="rca1" style="display:none">
+										<div class="panel panel-success">	
+											<div class="panel-body" style="max-height: 10 ;overflow-y:scroll" >RCA of cluster 1</div>
+										</div>      									
+										</div>
+										<div class="row" id="rca2" style="display:none">
+										<div class="panel panel-success">
+											<div class="panel-body">RCA of cluster 2 </div>
+										</div>      									
+										</div>
+										<div class="row" id="rca3" style="display:none">
+										<div class="panel panel-success">
+											<div class="panel-body">RCA of cluster 3</div>
+										</div>      									
 										</div>
 									</div>
 								</div>

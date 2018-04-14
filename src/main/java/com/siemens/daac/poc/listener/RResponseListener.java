@@ -6,6 +6,7 @@ import java.net.URL;
 
 import javax.jms.JMSException;
 
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import com.siemens.daac.poc.utility.CSVReaderUtil;
 @Component
 public class RResponseListener {
 
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
 	@Value("${mergedFilePath}")
 	String trainingSetLocation;
@@ -59,7 +61,9 @@ public class RResponseListener {
 			}else if(rOutput.getAlgoType().equals(ProjectConstants.CONST_MSW_CLUSTER_ALSO)) {
 				File f = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE);
 				File f1 = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
-				Object res =rOutput.getrResponse();
+				File forClusterReco = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE);
+				File forClusterReco1 = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE1);
+				File forClusterReco2 = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE2);
 				try {
 					f.createNewFile();
 					String clusterPath = similarityMatrixPath;
@@ -68,19 +72,34 @@ public class RResponseListener {
 					URL resourceUrl = RResponseListener.class.getClassLoader().getResource("static/");
 //					String mypath = new ClassPathResource("WEB-INF").getPath();
 					String mypath=resourceUrl.getPath();
-					
 					System.out.println("MMMMMMMMMMMMMMMMMMMMm" + mypath);
 						if(mypath.startsWith("/")) {
 							mypath=mypath.replaceFirst("/", "");
 						}
-					CSVMergeUtil.copyFileToDestination(clusterPath, mypath+"data");		
+					CSVMergeUtil.copyFileToDestination(clusterPath, mypath+"data");
+					ProjectConstants.recoTrainingClusterWiseMap.clear();
 					f1.createNewFile();
+					forClusterReco.createNewFile();
+					forClusterReco1.createNewFile();
+					forClusterReco2.createNewFile();
 				}catch(IOException e) {
 					System.out.println("problem occured while creating file for mswcluster");
 					e.printStackTrace();
 				}
 				
-			}else {
+			}else if(rOutput.getAlgoType().equals(ProjectConstants.CONST_TEST_RCA_ALGO)) {
+				System.out.println("Got Response Message of Test RCA ");
+				File f = new File(ProjectConstants.FILE_FLAG_FOR_TEST_RCA_DONE);
+				try {
+					f.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					logger.error("Error while creating the "+ProjectConstants.FILE_FLAG_FOR_TEST_RCA_DONE+" File");
+					e.printStackTrace();
+				}
+			}
+			
+			else {
 				System.out.println("got message for prefilter");
 			}
 		}

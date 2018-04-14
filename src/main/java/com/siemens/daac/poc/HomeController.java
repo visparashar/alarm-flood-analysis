@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.siemens.daac.poc.model.Flood;
@@ -12,7 +13,7 @@ import com.siemens.daac.poc.model.Flood;
 @Controller
 public class HomeController {
 	
-@RequestMapping("/flood")  
+@GetMapping("/flood")  
 public String displayHomePageForAlarm() {
 	return "AlarmHomePage";
 }

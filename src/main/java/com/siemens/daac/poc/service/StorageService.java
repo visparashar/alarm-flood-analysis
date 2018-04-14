@@ -98,15 +98,25 @@ public class StorageService {
 		File f2 = new File(ProjectConstants.FILE_FLAG_FOR_MSW_DONE_ONUI);
 		if(f2.exists())
 			f2.delete();
+		File forClusterReco = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE);
+		if(forClusterReco.exists())
+			forClusterReco.delete();
+		File forClusterReco1 = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE1);
+		if(forClusterReco1.exists())
+			forClusterReco1.delete();
+		File forClusterReco2 = new File(ProjectConstants.FILE_FLAF_FOR_CLUSTERRECO_DONE2);
+		if(forClusterReco2.exists())
+			forClusterReco2.delete();
+		File testRcaFlag = new File(ProjectConstants.FILE_FLAG_FOR_TEST_RCA_DONE);
+		if(testRcaFlag.exists())
+			testRcaFlag.delete();
 		File trueFloodDir = new File(predictionOutputFolder+"/"+ProjectConstants.TRUE_FLOOD_PATH);
 		if(trueFloodDir.exists()) {
 			FileUtils.cleanDirectory(trueFloodDir);
-//			FileUtils.moveToDirectory(trueFloodDir, new File("dumb/prediction_output_data/"+ProjectConstants.TRUE_FLOOD_PATH), true);
 		}
 		File falseFloodDir = new File(predictionOutputFolder+"/"+ProjectConstants.FALSE_FLOOD_PATH);
 		if(falseFloodDir.exists())
 			FileUtils.cleanDirectory(falseFloodDir);
-//			FileUtils.moveToDirectory(falseFloodDir, new File("dumb/prediction_output_data/"+ProjectConstants.FALSE_FLOOD_PATH), true);
 	}
 
 	private void copyFolder(File sourceFolder, File destinationFolder) throws IOException

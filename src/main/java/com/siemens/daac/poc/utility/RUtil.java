@@ -47,8 +47,13 @@ public class RUtil {
 		}
 		File frequencyCountOutputPath = new File(CommonUtils.readProperty("r-frequencycount-output-folder-location"));
 		if(!frequencyCountOutputPath.exists()){
-			return frequencyCountOutputPath.mkdirs();
+			frequencyCountOutputPath.mkdirs();
 		}
+		File testRcaOutputFilePath = new File(CommonUtils.readProperty("r-testrca-output-folder-location"));
+		if(!testRcaOutputFilePath.exists()){
+			return testRcaOutputFilePath.mkdirs();
+		}
+		
 		return true;
 		
 	}
@@ -142,6 +147,25 @@ public class RUtil {
 				String sourceOfFrequencyFile = CommonUtils.getRWorkspacePath()+"/"+ProjectConstants.FREQUENCY_COUNT_RFILE_PATH;
 				sourceOfFrequencyFile =sourceOfFrequencyFile.replaceAll("\\\\", "/");
 				rinput.setOtherRequiredPath(sourceOfFrequencyFile);
+				return rinput;
+			}
+			case ProjectConstants.CONST_TEST_RCA_ALGO :{
+				rinput = new RInput();
+				rinput.setAlgorithmType(ProjectConstants.CONST_TEST_RCA_ALGO);
+				rinput.setRunForTraining(false);
+				String inputFilePath =defaultWorkspace+"/"+CommonUtils.readProperty("user-upload-test-file-location");
+				inputFilePath = inputFilePath.replaceAll("\\\\", "/");
+				rinput.setInputFilePath(inputFilePath);
+				String testRcaInputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-testrca-input-folder-location");
+				testRcaInputFile = testRcaInputFile.replaceAll("\\\\", "/");
+				rinput.setTestRcaFilePath(testRcaInputFile);
+				String testRcaOutputFile = defaultWorkspace+"/"+CommonUtils.readProperty("r-testrca-output-folder-location")+"/";
+				testRcaOutputFile = testRcaOutputFile.replaceAll("\\\\", "/");
+				rinput.setOutputFilePath(testRcaOutputFile);
+				String rWorkspace = CommonUtils.getRWorkspacePath();
+				rWorkspace =rWorkspace.replaceAll("\\\\", "/");
+				rinput.setrWorkSpacePath(rWorkspace);
+				
 				return rinput;
 			}
 			default:{
